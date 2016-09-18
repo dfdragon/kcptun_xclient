@@ -1,0 +1,34 @@
+object FPhoto: TFPhoto
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu]
+  Caption = #25105#30340#19987#23646#31169#20154#28608#21169#24072' ^_^'
+  ClientHeight = 393
+  ClientWidth = 693
+  Position = OwnerFormCenter
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop, iPhone, iPad]
+  OnCreate = FormCreate
+  DesignerMobile = False
+  DesignerWidth = 0
+  DesignerHeight = 0
+  DesignerDeviceName = ''
+  DesignerOrientation = 0
+  DesignerOSVersion = ''
+  object Panel_Photo: TPanel
+    Height = 394.000000000000000000
+    Width = 694.000000000000000000
+    TabOrder = 0
+    object Image_Photo: TImage
+      MultiResBitmap = <
+        item
+        end>
+      Height = 390.000000000000000000
+      Position.X = 2.000000000000000000
+      Position.Y = 2.000000000000000000
+      Width = 690.000000000000000000
+      OnClick = Image_PhotoClick
+    end
+  end
+end
