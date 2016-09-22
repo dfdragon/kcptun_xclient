@@ -120,6 +120,8 @@ function fread(Ptr: Pointer; Size: LongWord; N: LongWord; Stream: PIOFile): Long
 //and return its process ID.  For errors, return (pid_t) -1.
 function wait(__stat_loc: PInteger): Integer; cdecl; external libc name '_wait';
 
+function getpid(): Integer; cdecl; external libc name '_getpid';
+
 implementation
 
 uses
@@ -165,11 +167,15 @@ begin
   GetMem(Buffer, BufferSize);
   if Assigned(Output) then
     try
-      FReadFromPipeStr:= '1';
+      FReadFromPipeStr:= '0;';
+      Synchronize(InputToMemo);
+//      FReadFromPipeStr:= IntToStr(getpid());
+//      Synchronize(InputToMemo);
+      FReadFromPipeStr:= '1;';
       Synchronize(InputToMemo);
       while feof(Output) = 0 do
         begin
-          FReadFromPipeStr:= '2';
+          FReadFromPipeStr:= '2;';
           Synchronize(InputToMemo);
           BytesRead:= fread(Buffer, 1, BufferSize, Output);
 //          BytesRead:= fread_unlocked(Buffer, 1, BufferSize, Output);

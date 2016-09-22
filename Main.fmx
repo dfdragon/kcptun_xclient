@@ -606,6 +606,7 @@ object FMain: TFMain
       TabOrder = 11
       Width = 891.000000000000000000
       ReadOnly = True
+      TextSettings.WordWrap = True
     end
     object Edit_Remark: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -643,6 +644,7 @@ object FMain: TFMain
       Width = 417.000000000000000000
       OnDblClick = Memo_CMDLineDblClick
       ReadOnly = True
+      TextSettings.WordWrap = True
     end
     object GroupBox_HiddenPara: TGroupBox
       Height = 61.000000000000000000
