@@ -9,7 +9,7 @@ uses
   Photo in 'Photo.pas' {FPhoto},
   PublicFun in 'PublicFun.pas',
   PublicVar in 'PublicVar.pas',
-  Thread_ExecDOSCommand in 'Thread_ExecDOSCommand.pas';
+  Thread_ExecCommand in 'Thread_ExecCommand.pas';
 
 {$R *.res}
 

@@ -160,17 +160,17 @@ procedure Enable_DisableSelectPara(State: Boolean);
 begin
   with FMain  do
     begin
-      CheckBox_Key.Enabled:= State;           CheckBox_KeyClick(FMain);
-      CheckBox_Crypt.Enabled:= State;         CheckBox_CryptClick(FMain);
-      CheckBox_NoComp.Enabled:= State;        CheckBox_NoCompClick(FMain);
-      CheckBox_DataShard.Enabled:= State;     CheckBox_DataShardClick(FMain);
-      CheckBox_ParityShard.Enabled:= State;   CheckBox_ParityShardClick(FMain);
-      CheckBox_Conn.Enabled:= State;          CheckBox_ConnClick(FMain);
-      CheckBox_MTU.Enabled:= State;           CheckBox_MTUClick(FMain);
-      CheckBox_SndWnd.Enabled:= State;        CheckBox_SndWndClick(FMain);
-      CheckBox_RcvWnd.Enabled:= State;        CheckBox_RcvWndClick(FMain);
-      CheckBox_DSCP.Enabled:= State;          CheckBox_DSCPClick(FMain);
-      CheckBox_AutoExpire.Enabled:= State;    CheckBox_AutoExpireClick(FMain);
+      CheckBox_Key.Enabled:= State;           CheckBox_KeyChange(FMain);
+      CheckBox_Crypt.Enabled:= State;         CheckBox_CryptChange(FMain);
+      CheckBox_NoComp.Enabled:= State;        CheckBox_NoCompChange(FMain);
+      CheckBox_DataShard.Enabled:= State;     CheckBox_DataShardChange(FMain);
+      CheckBox_ParityShard.Enabled:= State;   CheckBox_ParityShardChange(FMain);
+      CheckBox_Conn.Enabled:= State;          CheckBox_ConnChange(FMain);
+      CheckBox_MTU.Enabled:= State;           CheckBox_MTUChange(FMain);
+      CheckBox_SndWnd.Enabled:= State;        CheckBox_SndWndChange(FMain);
+      CheckBox_RcvWnd.Enabled:= State;        CheckBox_RcvWndChange(FMain);
+      CheckBox_DSCP.Enabled:= State;          CheckBox_DSCPChange(FMain);
+      CheckBox_AutoExpire.Enabled:= State;    CheckBox_AutoExpireChange(FMain);
     end;
 end;
 
@@ -179,10 +179,10 @@ procedure Enable_DisableModePara(State: Boolean);
 begin
   with FMain  do
     begin
-      CheckBox_NoDelay.Enabled:= State;     CheckBox_NoDelayClick(FMain);
-      CheckBox_Interval.Enabled:= State;    CheckBox_IntervalClick(FMain);
-      CheckBox_Resend.Enabled:= State;      CheckBox_ResendClick(FMain);
-      CheckBox_NC.Enabled:= State;          CheckBox_NCClick(FMain);
+      CheckBox_NoDelay.Enabled:= State;     CheckBox_NoDelayChange(FMain);
+      CheckBox_Interval.Enabled:= State;    CheckBox_IntervalChange(FMain);
+      CheckBox_Resend.Enabled:= State;      CheckBox_ResendChange(FMain);
+      CheckBox_NC.Enabled:= State;          CheckBox_NCChange(FMain);
     end;
 end;
 
@@ -191,9 +191,9 @@ procedure Enable_DisableHiddenPara(State: Boolean);
 begin
   with FMain  do
     begin
-      CheckBox_ACKNoDelay.Enabled:= State;    CheckBox_ACKNoDelayClick(FMain);
-      CheckBox_KeepAlive.Enabled:= State;     CheckBox_KeepAliveClick(FMain);
-      CheckBox_SockBuf.Enabled:= State;       CheckBox_SockBufClick(FMain);
+      CheckBox_ACKNoDelay.Enabled:= State;    CheckBox_ACKNoDelayChange(FMain);
+      CheckBox_KeepAlive.Enabled:= State;     CheckBox_KeepAliveChange(FMain);
+      CheckBox_SockBuf.Enabled:= State;       CheckBox_SockBufChange(FMain);
     end;
 end;
 
@@ -264,78 +264,78 @@ begin
 
       CheckBox_Key.isChecked:= Boolean(ClientNode.isKey);
       Edit_Key.Text:= ClientNode.Key;
-      CheckBox_Key.OnClick(FMain);
+      CheckBox_KeyChange(FMain);
 
       CheckBox_Crypt.isChecked:= Boolean(ClientNode.isCrypt);
       ComboBox_Crypt.ItemIndex:= ComboBox_Crypt.Items.IndexOf(ClientNode.Crypt);
-      CheckBox_Crypt.OnClick(FMain);
+      CheckBox_CryptChange(FMain);
 
       CheckBox_NoComp.isChecked:= Boolean(ClientNode.isNoComp);
-      CheckBox_NoComp.OnClick(FMain);
+      CheckBox_NoCompChange(FMain);
 
       CheckBox_DataShard.isChecked:= Boolean(ClientNode.isDataShard);
       Edit_DataShard.Text:= ClientNode.DataShard;
-      CheckBox_DataShard.OnClick(FMain);
+      CheckBox_DataShardChange(FMain);
 
       CheckBox_ParityShard.isChecked:= Boolean(ClientNode.isParityShard);
       Edit_ParityShard.Text:= ClientNode.ParityShard;
-      CheckBox_ParityShard.OnClick(FMain);
+      CheckBox_ParityShardChange(FMain);
 
       CheckBox_Conn.isChecked:= Boolean(ClientNode.isConn);
       Edit_Conn.Text:= ClientNode.Conn;
-      CheckBox_Conn.OnClick(FMain);
+      CheckBox_ConnChange(FMain);
 
       CheckBox_MTU.isChecked:= Boolean(ClientNode.isMTU);
       Edit_MTU.Text:= ClientNode.MTU;
-      CheckBox_MTU.OnClick(FMain);
+      CheckBox_MTUChange(FMain);
 
       CheckBox_SndWnd.isChecked:= Boolean(ClientNode.isSndWnd);
       Edit_SndWnd.Text:= ClientNode.SndWnd;
-      CheckBox_SndWnd.OnClick(FMain);
+      CheckBox_SndWndChange(FMain);
 
       CheckBox_RcvWnd.isChecked:= Boolean(ClientNode.isRcvWnd);
       Edit_RcvWnd.Text:= ClientNode.RcvWnd;
-      CheckBox_RcvWnd.OnClick(FMain);
+      CheckBox_RcvWndChange(FMain);
 
       CheckBox_DSCP.isChecked:= Boolean(ClientNode.isDSCP);
       Edit_DSCP.Text:= ClientNode.DSCP;
-      CheckBox_DSCP.OnClick(FMain);
+      CheckBox_DSCPChange(FMain);
 
       CheckBox_AutoExpire.isChecked:= Boolean(ClientNode.isAutoExpire);
       Edit_AutoExpire.Text:= ClientNode.AutoExpire;
-      CheckBox_AutoExpire.OnClick(FMain);
+      CheckBox_AutoExpireChange(FMain);
 
 //-------------------------------------------------------------------------------------
       ComboBox_Mode.ItemIndex:= ComboBox_Mode.Items.IndexOf(ClientNode.Mode);
 
       CheckBox_NoDelay.isChecked:= Boolean(ClientNode.isNoDelay);
-      CheckBox_NoDelay.OnClick(FMain);
+      CheckBox_NoDelayChange(FMain);
 
       CheckBox_Interval.isChecked:= Boolean(ClientNode.isInterval);
       Edit_Interval.Text:= ClientNode.Interval;
-      CheckBox_Interval.OnClick(FMain);
+      CheckBox_IntervalChange(FMain);
 
       CheckBox_Resend.isChecked:= Boolean(ClientNode.isResend);
       Edit_Resend.Text:= ClientNode.Resend;
-      CheckBox_Resend.OnClick(FMain);
+      CheckBox_ResendChange(FMain);
 
       CheckBox_NC.isChecked:= Boolean(ClientNode.isNC);
-      CheckBox_NC.OnClick(FMain);
+      CheckBox_NCChange(FMain);
 
       CheckBox_Mode.isChecked:= Boolean(ClientNode.isMode);
-      CheckBox_Mode.OnClick(FMain);
+      CheckBox_ModeChange(FMain);
 //-------------------------------------------------------------------------------------
 
       CheckBox_ACKNoDelay.isChecked:= Boolean(ClientNode.isACKNoDelay);
-      CheckBox_ACKNoDelay.OnClick(FMain);
+      CheckBox_ACKNoDelayChange(FMain);
 
       CheckBox_KeepAlive.isChecked:= Boolean(ClientNode.isKeepAlive);
       Edit_KeepAlive.Text:= ClientNode.KeepAlive;
-      CheckBox_KeepAlive.OnClick(FMain);
+      CheckBox_KeepAliveChange(FMain);
 
       CheckBox_SockBuf.isChecked:= Boolean(ClientNode.isSockBuf);
       Edit_SockBuf.Text:= ClientNode.SockBuf;
-      CheckBox_SockBuf.OnClick(FMain);
+      CheckBox_SockBufChange(FMain);
 
       Edit_Remark.Text:= ClientNode.Remark;
 
@@ -344,7 +344,7 @@ begin
 
       CheckBox_ConfigFileDir.isChecked:= Boolean(ClientNode.isJson);
       Edit_ConfigFileDir.Text:= ClientNode.Json;
-      CheckBox_ConfigFileDir.OnClick(FMain);
+      CheckBox_ConfigFileDirChange(FMain);
     end;
 end;
 

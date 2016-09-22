@@ -23,8 +23,8 @@ object FMain: TFMain
     Position.X = 278.000000000000000000
     Position.Y = 11.000000000000000000
     TextSettings.WordWrap = False
-    Text = 'KCPTun'#23458#25143#31471'exe'#25991#20214#65306
-    Width = 131.000000000000000000
+    Text = 'KCPTun'#23458#25143#31471#25991#20214#65306
+    Width = 113.000000000000000000
   end
   object Btn_AddNode: TButton
     Height = 25.000000000000000000
@@ -152,7 +152,7 @@ object FMain: TFMain
         Position.Y = 18.000000000000000000
         Width = 121.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_LocalPortChange
+        OnChangeTracking = Edit_LocalPortChangeTracking
       end
       object Edit_KCPServerIP: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -161,7 +161,7 @@ object FMain: TFMain
         Position.Y = 44.000000000000000000
         Width = 121.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_KCPServerIPChange
+        OnChangeTracking = Edit_KCPServerIPChangeTracking
       end
       object Edit_KCPServerPort: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -170,7 +170,7 @@ object FMain: TFMain
         Position.Y = 44.000000000000000000
         Width = 81.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_KCPServerPortChange
+        OnChangeTracking = Edit_KCPServerPortChangeTracking
       end
     end
     object GroupBox_SelectPara: TGroupBox
@@ -285,7 +285,7 @@ object FMain: TFMain
         Position.Y = 24.000000000000000000
         TabOrder = 0
         Width = 17.000000000000000000
-        OnClick = CheckBox_KeyClick
+        OnChange = CheckBox_KeyChange
       end
       object Edit_Key: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -294,7 +294,7 @@ object FMain: TFMain
         Position.Y = 22.000000000000000000
         Width = 281.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_KeyChange
+        OnChangeTracking = Edit_KeyChangeTracking
       end
       object CheckBox_Crypt: TCheckBox
         Height = 17.000000000000000000
@@ -302,7 +302,7 @@ object FMain: TFMain
         Position.Y = 52.000000000000000000
         TabOrder = 2
         Width = 17.000000000000000000
-        OnClick = CheckBox_CryptClick
+        OnChange = CheckBox_CryptChange
       end
       object ComboBox_Crypt: TComboBox
         DisableFocusEffect = False
@@ -333,7 +333,7 @@ object FMain: TFMain
         Position.Y = 108.000000000000000000
         TabOrder = 9
         Width = 17.000000000000000000
-        OnClick = CheckBox_ConnClick
+        OnChange = CheckBox_ConnChange
       end
       object Edit_Conn: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -342,7 +342,7 @@ object FMain: TFMain
         Position.Y = 106.000000000000000000
         Width = 41.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_ConnChange
+        OnChangeTracking = Edit_ConnChangeTracking
       end
       object CheckBox_MTU: TCheckBox
         Height = 17.000000000000000000
@@ -350,7 +350,7 @@ object FMain: TFMain
         Position.Y = 108.000000000000000000
         TabOrder = 11
         Width = 17.000000000000000000
-        OnClick = CheckBox_MTUClick
+        OnChange = CheckBox_MTUChange
       end
       object Edit_MTU: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -359,7 +359,7 @@ object FMain: TFMain
         Position.Y = 105.000000000000000000
         Width = 41.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_MTUChange
+        OnChangeTracking = Edit_MTUChangeTracking
       end
       object CheckBox_SndWnd: TCheckBox
         Height = 17.000000000000000000
@@ -367,7 +367,7 @@ object FMain: TFMain
         Position.Y = 136.000000000000000000
         TabOrder = 13
         Width = 17.000000000000000000
-        OnClick = CheckBox_SndWndClick
+        OnChange = CheckBox_SndWndChange
       end
       object Edit_SndWnd: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -376,7 +376,7 @@ object FMain: TFMain
         Position.Y = 134.000000000000000000
         Width = 41.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_SndWndChange
+        OnChangeTracking = Edit_SndWndChangeTracking
       end
       object CheckBox_RcvWnd: TCheckBox
         Height = 17.000000000000000000
@@ -384,7 +384,7 @@ object FMain: TFMain
         Position.Y = 136.000000000000000000
         TabOrder = 15
         Width = 17.000000000000000000
-        OnClick = CheckBox_RcvWndClick
+        OnChange = CheckBox_RcvWndChange
       end
       object Edit_RcvWnd: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -393,7 +393,7 @@ object FMain: TFMain
         Position.Y = 133.000000000000000000
         Width = 41.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_RcvWndChange
+        OnChangeTracking = Edit_RcvWndChangeTracking
       end
       object CheckBox_NoComp: TCheckBox
         Height = 17.000000000000000000
@@ -401,7 +401,7 @@ object FMain: TFMain
         Position.Y = 52.000000000000000000
         TabOrder = 4
         Width = 17.000000000000000000
-        OnClick = CheckBox_NoCompClick
+        OnChange = CheckBox_NoCompChange
       end
       object CheckBox_DSCP: TCheckBox
         Height = 17.000000000000000000
@@ -409,7 +409,7 @@ object FMain: TFMain
         Position.Y = 164.000000000000000000
         TabOrder = 17
         Width = 17.000000000000000000
-        OnClick = CheckBox_DSCPClick
+        OnChange = CheckBox_DSCPChange
       end
       object Edit_DSCP: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -418,7 +418,7 @@ object FMain: TFMain
         Position.Y = 162.000000000000000000
         Width = 41.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_DSCPChange
+        OnChangeTracking = Edit_DSCPChangeTracking
       end
       object CheckBox_DataShard: TCheckBox
         Height = 17.000000000000000000
@@ -426,7 +426,7 @@ object FMain: TFMain
         Position.Y = 80.000000000000000000
         TabOrder = 5
         Width = 17.000000000000000000
-        OnClick = CheckBox_DataShardClick
+        OnChange = CheckBox_DataShardChange
       end
       object Edit_DataShard: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -435,7 +435,7 @@ object FMain: TFMain
         Position.Y = 78.000000000000000000
         Width = 41.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_DataShardChange
+        OnChangeTracking = Edit_DataShardChangeTracking
       end
       object CheckBox_ParityShard: TCheckBox
         Height = 17.000000000000000000
@@ -443,7 +443,7 @@ object FMain: TFMain
         Position.Y = 80.000000000000000000
         TabOrder = 7
         Width = 17.000000000000000000
-        OnClick = CheckBox_ParityShardClick
+        OnChange = CheckBox_ParityShardChange
       end
       object Edit_ParityShard: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -452,7 +452,7 @@ object FMain: TFMain
         Position.Y = 77.000000000000000000
         Width = 41.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_ParityShardChange
+        OnChangeTracking = Edit_ParityShardChangeTracking
       end
       object CheckBox_AutoExpire: TCheckBox
         Height = 17.000000000000000000
@@ -460,7 +460,7 @@ object FMain: TFMain
         Position.Y = 164.000000000000000000
         TabOrder = 19
         Width = 17.000000000000000000
-        OnClick = CheckBox_AutoExpireClick
+        OnChange = CheckBox_AutoExpireChange
       end
       object Edit_AutoExpire: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -469,7 +469,7 @@ object FMain: TFMain
         Position.Y = 162.000000000000000000
         Width = 41.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_AutoExpireChange
+        OnChangeTracking = Edit_AutoExpireChangeTracking
       end
     end
     object GroupBox_Mode: TGroupBox
@@ -530,7 +530,7 @@ object FMain: TFMain
         Position.Y = 22.000000000000000000
         TabOrder = 2
         Width = 17.000000000000000000
-        OnClick = CheckBox_NoDelayClick
+        OnChange = CheckBox_NoDelayChange
       end
       object CheckBox_Interval: TCheckBox
         Height = 17.000000000000000000
@@ -538,7 +538,7 @@ object FMain: TFMain
         Position.Y = 44.000000000000000000
         TabOrder = 3
         Width = 17.000000000000000000
-        OnClick = CheckBox_IntervalClick
+        OnChange = CheckBox_IntervalChange
       end
       object Edit_Interval: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -547,7 +547,7 @@ object FMain: TFMain
         Position.Y = 42.000000000000000000
         Width = 41.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_IntervalChange
+        OnChangeTracking = Edit_IntervalChangeTracking
       end
       object CheckBox_Resend: TCheckBox
         Height = 17.000000000000000000
@@ -555,7 +555,7 @@ object FMain: TFMain
         Position.Y = 44.000000000000000000
         TabOrder = 5
         Width = 17.000000000000000000
-        OnClick = CheckBox_ResendClick
+        OnChange = CheckBox_ResendChange
       end
       object Edit_Resend: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -564,7 +564,7 @@ object FMain: TFMain
         Position.Y = 42.000000000000000000
         Width = 41.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_ResendChange
+        OnChangeTracking = Edit_ResendChangeTracking
       end
       object CheckBox_NC: TCheckBox
         Height = 17.000000000000000000
@@ -572,7 +572,7 @@ object FMain: TFMain
         Position.Y = 66.000000000000000000
         TabOrder = 7
         Width = 17.000000000000000000
-        OnClick = CheckBox_NCClick
+        OnChange = CheckBox_NCChange
       end
       object CheckBox_Mode: TCheckBox
         Height = 17.000000000000000000
@@ -580,7 +580,7 @@ object FMain: TFMain
         Position.Y = 22.000000000000000000
         TabOrder = 0
         Width = 17.000000000000000000
-        OnClick = CheckBox_ModeClick
+        OnChange = CheckBox_ModeChange
       end
       object ComboBox_Mode: TComboBox
         DisableFocusEffect = False
@@ -614,7 +614,7 @@ object FMain: TFMain
       Position.Y = 310.000000000000000000
       Width = 420.000000000000000000
       Height = 20.000000000000000000
-      OnChange = Edit_RemarkChange
+      OnChangeTracking = Edit_RemarkChangeTracking
     end
     object Btn_Start: TButton
       Height = 25.000000000000000000
@@ -684,7 +684,7 @@ object FMain: TFMain
         Position.Y = 18.000000000000000000
         TabOrder = 0
         Width = 17.000000000000000000
-        OnClick = CheckBox_ACKNoDelayClick
+        OnChange = CheckBox_ACKNoDelayChange
       end
       object CheckBox_SockBuf: TCheckBox
         Height = 17.000000000000000000
@@ -692,7 +692,7 @@ object FMain: TFMain
         Position.Y = 39.000000000000000000
         TabOrder = 3
         Width = 17.000000000000000000
-        OnClick = CheckBox_SockBufClick
+        OnChange = CheckBox_SockBufChange
       end
       object Edit_SockBuf: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -701,7 +701,7 @@ object FMain: TFMain
         Position.Y = 37.000000000000000000
         Width = 76.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_SockBufChange
+        OnChangeTracking = Edit_SockBufChangeTracking
       end
       object CheckBox_KeepAlive: TCheckBox
         Height = 17.000000000000000000
@@ -709,7 +709,7 @@ object FMain: TFMain
         Position.Y = 18.000000000000000000
         TabOrder = 1
         Width = 17.000000000000000000
-        OnClick = CheckBox_KeepAliveClick
+        OnChange = CheckBox_KeepAliveChange
       end
       object Edit_KeepAlive: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -718,7 +718,7 @@ object FMain: TFMain
         Position.Y = 16.000000000000000000
         Width = 41.000000000000000000
         Height = 20.000000000000000000
-        OnChange = Edit_KeepAliveChange
+        OnChangeTracking = Edit_KeepAliveChangeTracking
       end
     end
     object CheckBox_ConfigFileDir: TCheckBox
@@ -727,7 +727,7 @@ object FMain: TFMain
       Position.Y = 9.000000000000000000
       TabOrder = 0
       Width = 17.000000000000000000
-      OnClick = CheckBox_ConfigFileDirClick
+      OnChange = CheckBox_ConfigFileDirChange
     end
     object Edit_ConfigFileDir: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -737,7 +737,7 @@ object FMain: TFMain
       Position.Y = 8.000000000000000000
       Width = 690.000000000000000000
       Height = 20.000000000000000000
-      OnChange = Edit_ConfigFileDirChange
+      OnChangeTracking = Edit_ConfigFileDirChangeTracking
     end
     object Btn_FindConfigFileDir: TButton
       Height = 25.000000000000000000
@@ -784,7 +784,7 @@ object FMain: TFMain
     Position.Y = 8.000000000000000000
     Width = 690.000000000000000000
     Height = 20.000000000000000000
-    OnChange = Edit_ClientEXEDirChange
+    OnChangeTracking = Edit_ClientEXEDirChangeTracking
   end
   object Btn_FindClientEXE: TButton
     Height = 25.000000000000000000

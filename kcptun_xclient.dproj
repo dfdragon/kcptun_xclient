@@ -5,7 +5,7 @@
         <FrameworkType>FMX</FrameworkType>
         <MainSource>kcptun_xclient.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">OSX32</Platform>
         <TargetedPlatforms>4</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -88,6 +88,7 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_OSX32)'!=''">
+        <Icns_MainIcns>k.icns</Icns_MainIcns>
         <Debugger_Launcher>/usr/X11/bin/xterm -e &quot;%debuggee%&quot;</Debugger_Launcher>
         <Manifest_File>None</Manifest_File>
         <Icon_MainIcon>k.ico</Icon_MainIcon>
@@ -119,7 +120,7 @@
         </DCCReference>
         <DCCReference Include="PublicFun.pas"/>
         <DCCReference Include="PublicVar.pas"/>
-        <DCCReference Include="Thread_ExecDOSCommand.pas"/>
+        <DCCReference Include="Thread_ExecCommand.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -148,6 +149,26 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment>
+                <DeployFile LocalName="$(BDS)\bin\delphi_PROJECTICNS.icns" Configuration="Debug" Class="ProjectOSXResource">
+                    <Platform Name="OSX32">
+                        <RemoteName>kcptun_xclient.icns</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
+                    <Platform Name="OSX32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="OSX32\Debug\kcptun_xclient.info.plist" Configuration="Debug" Class="ProjectOSXInfoPList">
+                    <Platform Name="OSX32">
+                        <RemoteName>Info.plist</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="OSX32\Debug\kcptun_xclient.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\MacOS\</RemoteDir>
@@ -161,29 +182,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
-                    <Platform Name="OSX32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                    <Platform Name="iOSSimulator">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="OSX32\Debug\kcptun_xclient.entitlements" Configuration="Debug" Class="ProjectOSXEntitlements">
                     <Platform Name="OSX32">
                         <RemoteName>Entitlements.plist</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\kcptun_xclient.info.plist" Configuration="Debug" Class="ProjectOSXInfoPList">
-                    <Platform Name="OSX32">
-                        <RemoteName>Info.plist</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="$(BDS)\bin\delphi_PROJECTICNS.icns" Configuration="Debug" Class="ProjectOSXResource">
-                    <Platform Name="OSX32">
-                        <RemoteName>kcptun_xclient.icns</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

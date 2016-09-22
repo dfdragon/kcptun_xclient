@@ -1,4 +1,4 @@
-unit Thread_ExecDOSCommand;
+unit Thread_ExecCommand;
 
 interface
 
@@ -54,11 +54,17 @@ uses
 
 //**   Classes, Windows, Messages, SysUtils, ExtCtrls, StdCtrls, Forms, System.SyncObjs;
 
+const
+  libc = '/usr/lib/libc.dylib';
+
+type
+  PIOFile = Pointer;
+
 type
   TArg<T> = reference to procedure(const Arg: T);
 
 type
-  TExecDOSCommand_Thread = class(TThread)
+  TExecCommand_Thread = class(TThread)
   private
     FThreadState: Integer;      //线程运行状态
 
@@ -76,7 +82,7 @@ type
     procedure SetMemo_log(const Value: TMemo);
 
     procedure InputToMemo;
-    procedure CaptureConsoleOutput(const ACommand, AParameters: string; CallBack: TArg<PAnsiChar>);
+    procedure CaptureConsoleOutput(const ACommand, AParameters: string);
     procedure AppendOutputToLog(AppendStr: string);
   protected
     procedure Execute; override;
@@ -97,6 +103,23 @@ type
 const
   MaxCommandLen = 8191;
 
+//Create a new stream connected to a pipe running the given command.
+function popen(const Command: PAnsiChar; Modes: PAnsiChar): PIOFile; cdecl; external libc name '_popen';
+
+//Close a stream opened by popen and return the status of its child.
+function pclose(Stream: PIOFile): Integer; cdecl; external libc name '_pclose';
+
+//Return the EOF indicator for STREAM.
+function feof(Stream: PIOFile): Integer; cdecl; external libc name '_feof';
+
+//Read chunks of generic data from STREAM.
+function fread(Ptr: Pointer; Size: LongWord; N: LongWord; Stream: PIOFile): LongWord; cdecl; external libc name '_fread';
+//function fread_unlocked(Ptr: Pointer; Size: LongWord; N: LongWord; Stream: PIOFile): LongWord; cdecl; external libc name '_fread';
+
+//Wait for a child to die.  When one does, put its status in *STAT_LOC
+//and return its process ID.  For errors, return (pid_t) -1.
+function wait(__stat_loc: PInteger): Integer; cdecl; external libc name '_wait';
+
 implementation
 
 uses
@@ -104,7 +127,7 @@ uses
 
 { TExecDOSCommand_Thread }
 
-procedure TExecDOSCommand_Thread.SetMemo_log(const Value: TMemo);
+procedure TExecCommand_Thread.SetMemo_log(const Value: TMemo);
 begin
   FLock.Acquire;
   try
@@ -118,7 +141,7 @@ begin
   end;
 end;
 
-procedure TExecDOSCommand_Thread.InputToMemo;
+procedure TExecCommand_Thread.InputToMemo;
 begin
   if (FMemo_Log = nil) then
     Exit;
@@ -127,61 +150,52 @@ begin
 //  SendMessage(FMemo_Log.Handle, WM_VSCROLL, MAKELONG(SB_BOTTOM, 0), 0);
 end;
 
-procedure TExecDOSCommand_Thread.CaptureConsoleOutput(const ACommand, AParameters: string; CallBack: TArg<PAnsiChar>);
+procedure TExecCommand_Thread.CaptureConsoleOutput(const ACommand, AParameters: string);
 const
-//  CReadBuffer = 2400;
-  CReadBuffer = 115200;
-//var
-//  saSecurity: TSecurityAttributes;
-//  hRead: THandle;
-//  hWrite: THandle;
-//  suiStartup: TStartupInfo;
-//  piProcess: TProcessInformation;
-//  pBuffer: array [0 .. CReadBuffer] of AnsiChar;
-//  dBuffer: array [0 .. CReadBuffer] of AnsiChar;
-//  dRead: DWORD;
-//  dRunning: DWORD;
-//  dAvailable: DWORD;
+  BufferSize: Integer = 115200;
+var
+  Output: PIOFile;
+  Buffer: PAnsiChar;
+  TempString: AnsiString;
+  Line: AnsiString;
+  BytesRead: Integer;
 begin
-//  saSecurity.nLength:= SizeOf(TSecurityAttributes);
-//  saSecurity.bInheritHandle:= true;
-//  saSecurity.lpSecurityDescriptor:= nil;
-//  if CreatePipe(hRead, hWrite, @saSecurity, 0) then
-//    try
-//      FillChar(suiStartup, SizeOf(TStartupInfo), #0);
-//      suiStartup.cb:= SizeOf(TStartupInfo);
-//      suiStartup.hStdInput:= hRead;
-//      suiStartup.hStdOutput:= hWrite;
-//      suiStartup.hStdError:= hWrite;
-//      suiStartup.dwFlags:= STARTF_USESTDHANDLES or STARTF_USESHOWWINDOW;
-//      suiStartup.wShowWindow:= SW_HIDE;
-//      if CreateProcess(nil, PChar(ACommand + ' ' + AParameters), @saSecurity, @saSecurity, true, NORMAL_PRIORITY_CLASS, nil, nil, suiStartup, piProcess) then
-//        try
-//          FCMDHandle:= piProcess.hProcess;
-//          repeat
-//            dRunning:= WaitForSingleObject(piProcess.hProcess, 100);
-//            PeekNamedPipe(hRead, nil, 0, nil, @dAvailable, nil);
-//            if (dAvailable > 0) then
-//              repeat
-//                dRead:= 0;
-//                ReadFile(hRead, pBuffer[0], CReadBuffer, dRead, nil);
-//                pBuffer[dRead]:= #0;
-//                OemToCharA(pBuffer, dBuffer);
-//                CallBack(dBuffer);
-//              until (dRead < CReadBuffer);
-//            Application.ProcessMessages;
-//          until (dRunning <> WAIT_TIMEOUT);
-//        finally
-//          CloseHandle(piProcess.hProcess);
-//          CloseHandle(piProcess.hThread);
-//        end;//try
-//    finally
-//      CloseHandle(hRead);
-//      CloseHandle(hWrite);
-//    end;//try
+  TempString:= '';
+  Output:= popen(PAnsiChar(Ansistring(ACommand + ' ' + AParameters)), 'r');
+  GetMem(Buffer, BufferSize);
+  if Assigned(Output) then
+    try
+      FReadFromPipeStr:= '1';
+      Synchronize(InputToMemo);
+      while feof(Output) = 0 do
+        begin
+          FReadFromPipeStr:= '2';
+          Synchronize(InputToMemo);
+          BytesRead:= fread(Buffer, 1, BufferSize, Output);
+//          BytesRead:= fread_unlocked(Buffer, 1, BufferSize, Output);
+          FReadFromPipeStr:= 'Read:' + IntToStr(BytesRead);
+          Synchronize(InputToMemo);
+          SetLength(TempString, Length(TempString) + BytesRead);
+          Move(Buffer^, TempString[length(TempString) - (BytesRead - 1)], BytesRead);
+          FReadFromPipeStr:= '!' + TempString + '!';
+          Synchronize(InputToMemo);
+          while Pos(#10, TempString) > 0 do
+            begin
+              Line:= Copy(TempString, 1, Pos(#10, TempString) - 1);
+              FReadFromPipeStr:= UTF8ToString(Line);
+              AppendOutputToLog(FReadFromPipeStr);
+              Synchronize(InputToMemo);
+              TempString:= Copy(TempString, Pos(#10, TempString) + 1, Length(TempString));
+            end;
+        end;
+    finally
+      pclose(output);
+      wait(nil);
+      FreeMem(Buffer, BufferSize);
+    end;
 end;
 
-procedure TExecDOSCommand_Thread.AppendOutputToLog(AppendStr: string);
+procedure TExecCommand_Thread.AppendOutputToLog(AppendStr: string);
 begin
   FLock.Acquire;
   try
@@ -195,7 +209,7 @@ begin
   end;
 end;
 
-function TExecDOSCommand_Thread.GetWholeLog: string;
+function TExecCommand_Thread.GetWholeLog: string;
 begin
   FLock.Acquire;
   try
@@ -205,7 +219,7 @@ begin
   end;
 end;
 
-constructor TExecDOSCommand_Thread.Create(CommandLine: string; CreateSuspended: Boolean);
+constructor TExecCommand_Thread.Create(CommandLine: string; CreateSuspended: Boolean);
 begin
   inherited Create(CreateSuspended);
 
@@ -217,13 +231,13 @@ begin
   FThreadState:= 0;
 end;
 
-destructor TExecDOSCommand_Thread.Destroy;
+destructor TExecCommand_Thread.Destroy;
 begin
   FLock.Free;
   inherited;
 end;
 
-procedure TExecDOSCommand_Thread.Execute;
+procedure TExecCommand_Thread.Execute;
 begin
   FThreadState:= 1;
   FCorrectQuit:= False;
@@ -240,17 +254,11 @@ begin
     else
       begin
         FReadFromPipeStr:= '*************************** begin ***************************' + #13 + #10;
+
         AppendOutputToLog(FReadFromPipeStr);
         Synchronize(InputToMemo);
 
-        CaptureConsoleOutput(FCommandLine, '',
-          procedure(const Line: PAnsiChar)
-            begin
-              FReadFromPipeStr:= string(Line);
-              AppendOutputToLog(FReadFromPipeStr);
-              Synchronize(InputToMemo);
-            end
-        );
+        CaptureConsoleOutput(FCommandLine, '');
       end;
     FReadFromPipeStr:= '**************************** end ****************************' + #13 + #10 + #13 + #10;
     AppendOutputToLog(FReadFromPipeStr);

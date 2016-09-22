@@ -174,54 +174,17 @@ type
     procedure FormCreate(Sender: TObject);
     procedure Btn_FindClientEXEClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure CheckBox_KeyClick(Sender: TObject);
-    procedure CheckBox_CryptClick(Sender: TObject);
-    procedure CheckBox_ModeClick(Sender: TObject);
-    procedure Edit_LocalPortChange(Sender: TObject);
-    procedure Edit_KeyChange(Sender: TObject);
-    procedure Edit_RemarkChange(Sender: TObject);
-    procedure Edit_KCPServerIPChange(Sender: TObject);
-    procedure Edit_KCPServerPortChange(Sender: TObject);
     procedure CheckBox_AutoStartClick(Sender: TObject);
     procedure ComboBox_CryptChange(Sender: TObject);
-    procedure CheckBox_NoCompClick(Sender: TObject);
-    procedure CheckBox_DataShardClick(Sender: TObject);
-    procedure Edit_DataShardChange(Sender: TObject);
-    procedure CheckBox_ParityShardClick(Sender: TObject);
-    procedure Edit_ParityShardChange(Sender: TObject);
-    procedure CheckBox_ConnClick(Sender: TObject);
-    procedure Edit_ConnChange(Sender: TObject);
-    procedure CheckBox_MTUClick(Sender: TObject);
-    procedure Edit_MTUChange(Sender: TObject);
-    procedure CheckBox_SndWndClick(Sender: TObject);
-    procedure Edit_SndWndChange(Sender: TObject);
-    procedure CheckBox_RcvWndClick(Sender: TObject);
-    procedure Edit_RcvWndChange(Sender: TObject);
-    procedure CheckBox_DSCPClick(Sender: TObject);
-    procedure Edit_DSCPChange(Sender: TObject);
     procedure ComboBox_ModeChange(Sender: TObject);
-    procedure CheckBox_NoDelayClick(Sender: TObject);
-    procedure CheckBox_IntervalClick(Sender: TObject);
-    procedure Edit_IntervalChange(Sender: TObject);
-    procedure CheckBox_ResendClick(Sender: TObject);
-    procedure Edit_ResendChange(Sender: TObject);
-    procedure CheckBox_ACKNoDelayClick(Sender: TObject);
-    procedure CheckBox_KeepAliveClick(Sender: TObject);
-    procedure Edit_KeepAliveChange(Sender: TObject);
-    procedure CheckBox_SockBufClick(Sender: TObject);
-    procedure Edit_SockBufChange(Sender: TObject);
-    procedure CheckBox_NCClick(Sender: TObject);
     procedure Btn_StartClick(Sender: TObject);
     procedure Btn_StopClick(Sender: TObject);
     procedure Btn_DeleteNodeClick(Sender: TObject);
     procedure Menu_ShowClick(Sender: TObject);
     procedure Menu_ExitClick(Sender: TObject);
     procedure TrayIcon_SysClick(Sender: TObject);
-    procedure Edit_ClientEXEDirChange(Sender: TObject);
     procedure Memo_CMDLineDblClick(Sender: TObject);
     procedure CheckBox_MinimizeClick(Sender: TObject);
-    procedure CheckBox_AutoExpireClick(Sender: TObject);
-    procedure Edit_AutoExpireChange(Sender: TObject);
     procedure Edit_LocalPortKeyPress(Sender: TObject; var Key: Char);
     procedure Btn_StartAllClick(Sender: TObject);
     procedure Btn_StopAllClick(Sender: TObject);
@@ -229,8 +192,6 @@ type
     procedure Menu_StopAllClick(Sender: TObject);
     procedure SpeedBtn_CMDLineClick(Sender: TObject);
     procedure SpeedBtn_ClearLogClick(Sender: TObject);
-    procedure CheckBox_ConfigFileDirClick(Sender: TObject);
-    procedure Edit_ConfigFileDirChange(Sender: TObject);
     procedure Btn_FindConfigFileDirClick(Sender: TObject);
     procedure Menu_StartClick(Sender: TObject);
     procedure Menu_StopClick(Sender: TObject);
@@ -240,6 +201,45 @@ type
     procedure ListBox_NodeClick(Sender: TObject);
     procedure Label1Click(Sender: TObject);
     procedure ListBox_NodeDblClick(Sender: TObject);
+    procedure Edit_RemarkChangeTracking(Sender: TObject);
+    procedure Edit_ClientEXEDirChangeTracking(Sender: TObject);
+    procedure Edit_ConfigFileDirChangeTracking(Sender: TObject);
+    procedure Edit_LocalPortChangeTracking(Sender: TObject);
+    procedure Edit_KCPServerIPChangeTracking(Sender: TObject);
+    procedure Edit_KCPServerPortChangeTracking(Sender: TObject);
+    procedure Edit_KeyChangeTracking(Sender: TObject);
+    procedure Edit_DataShardChangeTracking(Sender: TObject);
+    procedure Edit_ParityShardChangeTracking(Sender: TObject);
+    procedure Edit_ConnChangeTracking(Sender: TObject);
+    procedure Edit_MTUChangeTracking(Sender: TObject);
+    procedure Edit_SndWndChangeTracking(Sender: TObject);
+    procedure Edit_RcvWndChangeTracking(Sender: TObject);
+    procedure Edit_DSCPChangeTracking(Sender: TObject);
+    procedure Edit_AutoExpireChangeTracking(Sender: TObject);
+    procedure Edit_IntervalChangeTracking(Sender: TObject);
+    procedure Edit_ResendChangeTracking(Sender: TObject);
+    procedure Edit_KeepAliveChangeTracking(Sender: TObject);
+    procedure Edit_SockBufChangeTracking(Sender: TObject);
+    procedure CheckBox_KeyChange(Sender: TObject);
+    procedure CheckBox_CryptChange(Sender: TObject);
+    procedure CheckBox_NoCompChange(Sender: TObject);
+    procedure CheckBox_DataShardChange(Sender: TObject);
+    procedure CheckBox_ParityShardChange(Sender: TObject);
+    procedure CheckBox_ConnChange(Sender: TObject);
+    procedure CheckBox_MTUChange(Sender: TObject);
+    procedure CheckBox_SndWndChange(Sender: TObject);
+    procedure CheckBox_RcvWndChange(Sender: TObject);
+    procedure CheckBox_DSCPChange(Sender: TObject);
+    procedure CheckBox_AutoExpireChange(Sender: TObject);
+    procedure CheckBox_ModeChange(Sender: TObject);
+    procedure CheckBox_NoDelayChange(Sender: TObject);
+    procedure CheckBox_IntervalChange(Sender: TObject);
+    procedure CheckBox_ResendChange(Sender: TObject);
+    procedure CheckBox_NCChange(Sender: TObject);
+    procedure CheckBox_ACKNoDelayChange(Sender: TObject);
+    procedure CheckBox_KeepAliveChange(Sender: TObject);
+    procedure CheckBox_SockBufChange(Sender: TObject);
+    procedure CheckBox_ConfigFileDirChange(Sender: TObject);
   private
     { Private declarations }
 //    procedure WMSYSCommand(var Msg: TWMSysCommand); message WM_SYSCOMMAND;
@@ -357,10 +357,7 @@ begin
       ClientNode.StopCommand;
     end;
   ClientNode.Free;
-//  ListBox_Node.Items.Delete(ListBox_Node.ItemIndex(ListBox_Node.Selected));
-
-//  ListBox_Node.ListItems
-
+  ListBox_Node.Items.Delete(ListBox_Node.Selected.Index);
   ListBox_NodeClick(Self);
 end;
 
@@ -441,7 +438,7 @@ begin
   Btn_Stop.Enabled:= False;
 end;
 
-procedure TFMain.CheckBox_ACKNoDelayClick(Sender: TObject);
+procedure TFMain.CheckBox_ACKNoDelayChange(Sender: TObject);
 begin
   Label_ACKNoDelay.Enabled:= CheckBox_ACKNoDelay.isChecked;
   if ListBox_Node.Selected = nil then
@@ -449,7 +446,7 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isACKNoDelay:= Integer(CheckBox_ACKNoDelay.isChecked);
 end;
 
-procedure TFMain.CheckBox_AutoExpireClick(Sender: TObject);
+procedure TFMain.CheckBox_AutoExpireChange(Sender: TObject);
 begin
   Label_AutoExpire.Enabled:= CheckBox_AutoExpire.isChecked;
   Edit_AutoExpire.Enabled:= CheckBox_AutoExpire.isChecked;
@@ -483,7 +480,7 @@ begin
 //  end;
 end;
 
-procedure TFMain.CheckBox_ConfigFileDirClick(Sender: TObject);
+procedure TFMain.CheckBox_ConfigFileDirChange(Sender: TObject);
 begin
   Label_ConfigFileDir.Enabled:= CheckBox_ConfigFileDir.isChecked;
   Edit_ConfigFileDir.Enabled:= CheckBox_ConfigFileDir.isChecked;
@@ -513,7 +510,7 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isJson:= Integer(CheckBox_ConfigFileDir.isChecked);
 end;
 
-procedure TFMain.CheckBox_ConnClick(Sender: TObject);
+procedure TFMain.CheckBox_ConnChange(Sender: TObject);
 begin
   Label_Conn.Enabled:= CheckBox_Conn.isChecked;
   Edit_Conn.Enabled:= CheckBox_Conn.isChecked;
@@ -532,7 +529,7 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isConn:= Integer(CheckBox_Conn.isChecked);
 end;
 
-procedure TFMain.CheckBox_CryptClick(Sender: TObject);
+procedure TFMain.CheckBox_CryptChange(Sender: TObject);
 begin
   Label_Crypt.Enabled:= CheckBox_Crypt.isChecked;
   ComboBox_Crypt.Enabled:= CheckBox_Crypt.isChecked;
@@ -546,7 +543,7 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isCrypt:= Integer(CheckBox_Crypt.isChecked);
 end;
 
-procedure TFMain.CheckBox_DataShardClick(Sender: TObject);
+procedure TFMain.CheckBox_DataShardChange(Sender: TObject);
 begin
   Label_DataShard.Enabled:= CheckBox_DataShard.isChecked;
   Edit_DataShard.Enabled:= CheckBox_DataShard.isChecked;
@@ -565,7 +562,7 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isDataShard:= Integer(CheckBox_DataShard.isChecked);
 end;
 
-procedure TFMain.CheckBox_DSCPClick(Sender: TObject);
+procedure TFMain.CheckBox_DSCPChange(Sender: TObject);
 begin
   Label_DSCP.Enabled:= CheckBox_DSCP.isChecked;
   Edit_DSCP.Enabled:= CheckBox_DSCP.isChecked;
@@ -584,9 +581,9 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isDSCP:= Integer(CheckBox_DSCP.isChecked);
 end;
 
-procedure TFMain.CheckBox_IntervalClick(Sender: TObject);
+procedure TFMain.CheckBox_IntervalChange(Sender: TObject);
 begin
-  if (CheckBox_Mode.isChecked) and (ComboBox_Mode.Selected.Text = 'manual') and (CheckBox_Interval.isChecked) then
+  if (CheckBox_Mode.isChecked) and (ComboBox_Mode.Selected <> nil) and (ComboBox_Mode.Selected.Text = 'manual') and (CheckBox_Interval.isChecked) then
     begin
       Label_Interval.Enabled:= True;
 //      Edit_Interval.Color:= clWindow;
@@ -605,7 +602,7 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isInterval:= Integer(CheckBox_Interval.isChecked);
 end;
 
-procedure TFMain.CheckBox_KeepAliveClick(Sender: TObject);
+procedure TFMain.CheckBox_KeepAliveChange(Sender: TObject);
 begin
   Label_KeepAlive.Enabled:= CheckBox_KeepAlive.isChecked;
   Edit_KeepAlive.Enabled:= CheckBox_KeepAlive.isChecked;
@@ -624,7 +621,7 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isKeepAlive:= Integer(CheckBox_KeepAlive.isChecked);
 end;
 
-procedure TFMain.CheckBox_KeyClick(Sender: TObject);
+procedure TFMain.CheckBox_KeyChange(Sender: TObject);
 begin
   Label_Key.Enabled:= CheckBox_Key.isChecked;
   Edit_Key.Enabled:= CheckBox_Key.isChecked;
@@ -652,7 +649,7 @@ begin
   PublicVar.XMLDocument_Para.SaveToFile;
 end;
 
-procedure TFMain.CheckBox_ModeClick(Sender: TObject);
+procedure TFMain.CheckBox_ModeChange(Sender: TObject);
 begin
   Label_Mode.Enabled:= CheckBox_Mode.isChecked;
   ComboBox_Mode.Enabled:= CheckBox_Mode.isChecked;
@@ -676,7 +673,7 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isMode:= Integer(CheckBox_Mode.isChecked);
 end;
 
-procedure TFMain.CheckBox_MTUClick(Sender: TObject);
+procedure TFMain.CheckBox_MTUChange(Sender: TObject);
 begin
   Label_MTU.Enabled:= CheckBox_MTU.isChecked;
   Edit_MTU.Enabled:= CheckBox_MTU.isChecked;
@@ -695,9 +692,9 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isMTU:= Integer(CheckBox_MTU.isChecked);
 end;
 
-procedure TFMain.CheckBox_NCClick(Sender: TObject);
+procedure TFMain.CheckBox_NCChange(Sender: TObject);
 begin
-  if (CheckBox_Mode.isChecked) and (ComboBox_Mode.Selected.Text = 'manual') and (CheckBox_NC.isChecked) then
+  if (CheckBox_Mode.isChecked) and (ComboBox_Mode.Selected <> nil) and (ComboBox_Mode.Selected.Text = 'manual') and (CheckBox_NC.isChecked) then
     begin
       Label_NC.Enabled:= True;
     end
@@ -710,7 +707,7 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isNC:= Integer(CheckBox_NC.isChecked);
 end;
 
-procedure TFMain.CheckBox_NoCompClick(Sender: TObject);
+procedure TFMain.CheckBox_NoCompChange(Sender: TObject);
 begin
   Label_NoComp.Enabled:= CheckBox_NoComp.isChecked;
   if ListBox_Node.Selected = nil then
@@ -718,9 +715,9 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isNoComp:= Integer(CheckBox_NoComp.isChecked);
 end;
 
-procedure TFMain.CheckBox_NoDelayClick(Sender: TObject);
+procedure TFMain.CheckBox_NoDelayChange(Sender: TObject);
 begin
-  if (CheckBox_Mode.isChecked) and (ComboBox_Mode.Selected.Text = 'manual') and (CheckBox_NoDelay.isChecked) then
+  if (CheckBox_Mode.isChecked) and (ComboBox_Mode.Selected <> nil) and (ComboBox_Mode.Selected.Text = 'manual') and (CheckBox_NoDelay.isChecked) then
     begin
       Label_NoDelay.Enabled:= True;
     end
@@ -733,7 +730,7 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isNoDelay:= Integer(CheckBox_NoDelay.isChecked);
 end;
 
-procedure TFMain.CheckBox_ParityShardClick(Sender: TObject);
+procedure TFMain.CheckBox_ParityShardChange(Sender: TObject);
 begin
   Label_ParityShard.Enabled:= CheckBox_ParityShard.isChecked;
   Edit_ParityShard.Enabled:= CheckBox_ParityShard.isChecked;
@@ -752,7 +749,7 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isParityShard:= Integer(CheckBox_ParityShard.isChecked);
 end;
 
-procedure TFMain.CheckBox_RcvWndClick(Sender: TObject);
+procedure TFMain.CheckBox_RcvWndChange(Sender: TObject);
 begin
   Label_RcvWnd.Enabled:= CheckBox_RcvWnd.isChecked;
   Edit_RcvWnd.Enabled:= CheckBox_RcvWnd.isChecked;
@@ -771,9 +768,9 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isRcvWnd:= Integer(CheckBox_RcvWnd.isChecked);
 end;
 
-procedure TFMain.CheckBox_ResendClick(Sender: TObject);
+procedure TFMain.CheckBox_ResendChange(Sender: TObject);
 begin
-  if (CheckBox_Mode.isChecked) and (ComboBox_Mode.Selected.Text = 'manual') and (CheckBox_Resend.isChecked) then
+  if (CheckBox_Mode.isChecked) and (ComboBox_Mode.Selected <> nil) and (ComboBox_Mode.Selected.Text = 'manual') and (CheckBox_Resend.isChecked) then
     begin
       Label_Resend.Enabled:= True;
 //      Edit_Resend.Color:= clWindow;
@@ -792,7 +789,7 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isResend:= Integer(CheckBox_Resend.isChecked);
 end;
 
-procedure TFMain.CheckBox_SndWndClick(Sender: TObject);
+procedure TFMain.CheckBox_SndWndChange(Sender: TObject);
 begin
   Label_SndWnd.Enabled:= CheckBox_SndWnd.isChecked;
   Edit_SndWnd.Enabled:= CheckBox_SndWnd.isChecked;
@@ -811,7 +808,7 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isSndWnd:= Integer(CheckBox_SndWnd.isChecked);
 end;
 
-procedure TFMain.CheckBox_SockBufClick(Sender: TObject);
+procedure TFMain.CheckBox_SockBufChange(Sender: TObject);
 begin
   Label_SockBuf.Enabled:= CheckBox_SockBuf.isChecked;
   Edit_SockBuf.Enabled:= CheckBox_SockBuf.isChecked;
@@ -834,32 +831,42 @@ procedure TFMain.ComboBox_CryptChange(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
-  TClientNode(ListBox_Node.Selected.Data).Crypt:= ComboBox_Crypt.Selected.Text;
+  if ComboBox_Crypt.Selected = nil  then
+    TClientNode(ListBox_Node.Selected.Data).Crypt:= ''
+  else
+    TClientNode(ListBox_Node.Selected.Data).Crypt:= ComboBox_Crypt.Selected.Text;
 end;
 
 procedure TFMain.ComboBox_ModeChange(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
-  TClientNode(ListBox_Node.Selected.Data).Mode:= ComboBox_Mode.Selected.Text;
-  if (ComboBox_Mode.Selected.Text = 'manual') then
+  if ComboBox_Mode.Selected = nil then
     begin
-      Enable_DisableModePara(True);
+      TClientNode(ListBox_Node.Selected.Data).Mode:= '';
     end
   else
     begin
-      Enable_DisableModePara(False);
+      TClientNode(ListBox_Node.Selected.Data).Mode:= ComboBox_Mode.Selected.Text;
+      if (ComboBox_Mode.Selected.Text = 'manual') then
+        begin
+          Enable_DisableModePara(True);
+        end
+      else
+        begin
+          Enable_DisableModePara(False);
+        end;
     end;
 end;
 
-procedure TFMain.Edit_AutoExpireChange(Sender: TObject);
+procedure TFMain.Edit_AutoExpireChangeTracking(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
   TClientNode(ListBox_Node.Selected.Data).AutoExpire:= Edit_AutoExpire.Text;
 end;
 
-procedure TFMain.Edit_ClientEXEDirChange(Sender: TObject);
+procedure TFMain.Edit_ClientEXEDirChangeTracking(Sender: TObject);
 begin
   if not PublicVar.CanModifyXML then
     Exit;
@@ -867,42 +874,42 @@ begin
   PublicVar.XMLDocument_Para.SaveToFile;
 end;
 
-procedure TFMain.Edit_ConfigFileDirChange(Sender: TObject);
+procedure TFMain.Edit_ConfigFileDirChangeTracking(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
   TClientNode(ListBox_Node.Selected.Data).Json:= Edit_ConfigFileDir.Text;
 end;
 
-procedure TFMain.Edit_ConnChange(Sender: TObject);
+procedure TFMain.Edit_ConnChangeTracking(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
   TClientNode(ListBox_Node.Selected.Data).Conn:= Edit_Conn.Text;
 end;
 
-procedure TFMain.Edit_DataShardChange(Sender: TObject);
+procedure TFMain.Edit_DataShardChangeTracking(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
   TClientNode(ListBox_Node.Selected.Data).DataShard:= Edit_DataShard.Text;
 end;
 
-procedure TFMain.Edit_DSCPChange(Sender: TObject);
+procedure TFMain.Edit_DSCPChangeTracking(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
   TClientNode(ListBox_Node.Selected.Data).DSCP:= Edit_DSCP.Text;
 end;
 
-procedure TFMain.Edit_IntervalChange(Sender: TObject);
+procedure TFMain.Edit_IntervalChangeTracking(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
   TClientNode(ListBox_Node.Selected.Data).Interval:= Edit_Interval.Text;
 end;
 
-procedure TFMain.Edit_KCPServerIPChange(Sender: TObject);
+procedure TFMain.Edit_KCPServerIPChangeTracking(Sender: TObject);
 var
   ClientNode: TClientNode;
   ShowCaption: string;
@@ -917,7 +924,7 @@ begin
   ListBox_Node.Selected.Text:= ShowCaption;
 end;
 
-procedure TFMain.Edit_KCPServerPortChange(Sender: TObject);
+procedure TFMain.Edit_KCPServerPortChangeTracking(Sender: TObject);
 var
   ClientNode: TClientNode;
   ShowCaption: string;
@@ -932,21 +939,21 @@ begin
   ListBox_Node.Selected.Text:= ShowCaption;
 end;
 
-procedure TFMain.Edit_KeepAliveChange(Sender: TObject);
+procedure TFMain.Edit_KeepAliveChangeTracking(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
   TClientNode(ListBox_Node.Selected.Data).KeepAlive:= Edit_KeepAlive.Text;
 end;
 
-procedure TFMain.Edit_KeyChange(Sender: TObject);
+procedure TFMain.Edit_KeyChangeTracking(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
   TClientNode(ListBox_Node.Selected.Data).Key:= Edit_Key.Text;
 end;
 
-procedure TFMain.Edit_LocalPortChange(Sender: TObject);
+procedure TFMain.Edit_LocalPortChangeTracking(Sender: TObject);
 var
   ClientNode: TClientNode;
   ShowCaption: string;
@@ -967,28 +974,28 @@ begin
     Key:= #0;
 end;
 
-procedure TFMain.Edit_MTUChange(Sender: TObject);
+procedure TFMain.Edit_MTUChangeTracking(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
   TClientNode(ListBox_Node.Selected.Data).MTU:= Edit_MTU.Text;
 end;
 
-procedure TFMain.Edit_ParityShardChange(Sender: TObject);
+procedure TFMain.Edit_ParityShardChangeTracking(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
   TClientNode(ListBox_Node.Selected.Data).ParityShard:= Edit_ParityShard.Text;
 end;
 
-procedure TFMain.Edit_RcvWndChange(Sender: TObject);
+procedure TFMain.Edit_RcvWndChangeTracking(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
   TClientNode(ListBox_Node.Selected.Data).RcvWnd:= Edit_RcvWnd.Text;
 end;
 
-procedure TFMain.Edit_RemarkChange(Sender: TObject);
+procedure TFMain.Edit_RemarkChangeTracking(Sender: TObject);
 var
   ClientNode: TClientNode;
   ShowCaption: string;
@@ -1003,21 +1010,21 @@ begin
   ListBox_Node.Selected.Text:= ShowCaption;
 end;
 
-procedure TFMain.Edit_ResendChange(Sender: TObject);
+procedure TFMain.Edit_ResendChangeTracking(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
   TClientNode(ListBox_Node.Selected.Data).Resend:= Edit_Resend.Text;
 end;
 
-procedure TFMain.Edit_SndWndChange(Sender: TObject);
+procedure TFMain.Edit_SndWndChangeTracking(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
   TClientNode(ListBox_Node.Selected.Data).SndWnd:= Edit_SndWnd.Text;
 end;
 
-procedure TFMain.Edit_SockBufChange(Sender: TObject);
+procedure TFMain.Edit_SockBufChangeTracking(Sender: TObject);
 begin
   if ListBox_Node.Selected = nil then
     Exit;
@@ -1139,11 +1146,13 @@ begin
   PublicVar.CanFoucs:= False;
   Memo_CMDLine.Lines.Clear;
 //  StatusBar_Status.Panels[0].Text:= '';
-//  for i := 0 to (ListBox_Node.Count - 1) do
-//    begin
-//      ClientNode:= TClientNode(ListBox_Node.ListItems[i].Data);
-//      ClientNode.Memo_Log:= nil;
-//    end;
+  for i := 0 to (ListBox_Node.Count - 1) do
+    begin
+      if (ListBox_Node.ListItems[i] is TListBoxGroupHeader) then
+        Continue;
+      ClientNode:= TClientNode(ListBox_Node.ListItems[i].Data);
+      ClientNode.Memo_Log:= nil;
+    end;
   Memo_Log.Lines.Clear;
 
   if (ListBox_Node.Selected = nil) then
@@ -1163,7 +1172,7 @@ begin
   Btn_DeleteNode.Enabled:= True;
 
   CheckBox_ConfigFileDir.Enabled:= True;
-  CheckBox_ConfigFileDirClick(Self);
+  CheckBox_ConfigFileDirChange(Self);
 
   Label_Remark.Enabled:= True;
   Edit_Remark.Enabled:= True;

@@ -48,7 +48,7 @@ uses
 
   Xml.XMLIntf, Xml.XMLDoc, System.JSON,
 
-  Thread_ExecDOSCommand;
+  Thread_ExecCommand;
 
 
 
@@ -69,7 +69,7 @@ type
 
     FCorrectQuit: Boolean;
 
-    FCMDThread: TExecDOSCommand_Thread;
+    FCMDThread: TExecCommand_Thread;
 
     FXMLDocument_Para: TXMLDocument;
     FXMLNode: IXMLNode;     //对应xml中的节点
@@ -1123,7 +1123,7 @@ end;
 
 function TClientNode.RunCommand(CommandLine: string): Integer;
 begin
-  FCMDThread:= TExecDOSCommand_Thread.Create(CommandLine, True);
+  FCMDThread:= TExecCommand_Thread.Create(CommandLine, True);
   FCMDThread.MainFormHandle:= FMainFormHandle;
   FCMDThread.Owner:= Self;
   FCMDThread.Memo_Log:= FMemo_Log;
