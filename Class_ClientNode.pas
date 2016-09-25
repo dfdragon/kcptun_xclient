@@ -266,7 +266,8 @@ type
     function ModifyXMLNodeValue(Tag: string; TagValue: string): Integer;
     function CreateCMDLine(ClientEXEPathName: string): string;
     function CreateJSONConfig(): string;
-    function GetHandle(): THandle;
+//    function GetHandle(): THandle;
+    function GetOutput(): PIOFile;
     function RunCommand(CommandLine: string): Integer;
     function StopCommand(): Integer;
 
@@ -1048,7 +1049,7 @@ begin
         end;
     end;
 
-  Result:= Trim(CMDLine);
+  Result:= Trim(CMDLine) + ' 2>&1';
 end;
 
 function TClientNode.CreateJSONConfig(): string;
@@ -1116,9 +1117,14 @@ begin
   end;
 end;
 
-function TClientNode.GetHandle(): THandle;
+//function TClientNode.GetHandle(): THandle;
+//begin
+//  Result:= FCMDThread.CMDHandle;
+//end;
+
+function TClientNode.GetOutput(): PIOFile;
 begin
-  Result:= FCMDThread.CMDHandle;
+  Result:= FCMDThread.Output;
 end;
 
 function TClientNode.RunCommand(CommandLine: string): Integer;
@@ -1134,6 +1140,7 @@ end;
 function TClientNode.StopCommand(): Integer;
 begin
 //  TerminateProcess(GetHandle(), 0);
+  pclose(GetOutput());
   while FCMDThread.ThreadState <> 2 do
     Application.ProcessMessages;
   FWholeLog:= FWholeLog + FCMDThread.GetWholeLog;

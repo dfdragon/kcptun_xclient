@@ -57,6 +57,9 @@ uses
 const
   libc = '/usr/lib/libc.dylib';
 
+  F_SETFL = 4;
+  O_NONBLOCK = $0004;
+
 type
   PIOFile = Pointer;
 
@@ -75,7 +78,8 @@ type
     FCMDLog: string;            //完整的输出日志
     FReadFromPipeStr: string;   //从控制台管道中读出的字符串
     FCommandLine: string;       //待执行的命令行
-    FCMDHandle: THandle;        //控制台程序句柄
+//    FCMDHandle: THandle;        //控制台程序句柄
+    FOutput: PIOFile;
     FMemo_Log: TMemo;
     FCorrectQuit: Boolean;      //是否是正常的退出
 
@@ -90,7 +94,8 @@ type
     property ThreadState: Integer read FThreadState;
     property Owner: TObject read FOwner write FOwner;
     property MainFormHandle: TWindowHandle read FMainFormHandle write FMainFormHandle;
-    property CMDHandle: THandle read FCMDHandle;
+//    property CMDHandle: THandle read FCMDHandle;
+    property Output: PIOFile read FOutput;
     property Memo_Log: TMemo read FMemo_Log write SetMemo_log;
     property CorrectQuit: Boolean read FCorrectQuit write FCorrectQuit;
 
@@ -114,7 +119,6 @@ function feof(Stream: PIOFile): Integer; cdecl; external libc name '_feof';
 
 //Read chunks of generic data from STREAM.
 function fread(Ptr: Pointer; Size: LongWord; N: LongWord; Stream: PIOFile): LongWord; cdecl; external libc name '_fread';
-//function fread_unlocked(Ptr: Pointer; Size: LongWord; N: LongWord; Stream: PIOFile): LongWord; cdecl; external libc name '_fread';
 
 //Wait for a child to die.  When one does, put its status in *STAT_LOC
 //and return its process ID.  For errors, return (pid_t) -1.
@@ -122,12 +126,17 @@ function wait(__stat_loc: PInteger): Integer; cdecl; external libc name '_wait';
 
 function getpid(): Integer; cdecl; external libc name '_getpid';
 
+function fgets(Ptr: Pointer; N: LongWord; Stream: PIOFile): LongWord; cdecl; external libc name '_fgets';
+
+function fileno(Stream: PIOFile): Integer; cdecl; external libc name '_fileno';
+function fcntl(fd: Integer; cmd: Integer; arg: Integer): LongWord; cdecl; external libc name '_fcntl';
+
 implementation
 
 uses
   PublicVar;
 
-{ TExecDOSCommand_Thread }
+{ TExecCommand_Thread }
 
 procedure TExecCommand_Thread.SetMemo_log(const Value: TMemo);
 begin
@@ -156,46 +165,38 @@ procedure TExecCommand_Thread.CaptureConsoleOutput(const ACommand, AParameters: 
 const
   BufferSize: Integer = 115200;
 var
-  Output: PIOFile;
+//  Output: PIOFile;
   Buffer: PAnsiChar;
   TempString: AnsiString;
-  Line: AnsiString;
   BytesRead: Integer;
 begin
   TempString:= '';
-  Output:= popen(PAnsiChar(Ansistring(ACommand + ' ' + AParameters)), 'r');
+//  FOutput:= popen(PAnsiChar(Ansistring(ACommand + ' ' + AParameters + ' 2>&1')), 'r');
+  FOutput:= popen(PAnsiChar(Ansistring(ACommand + ' ' + AParameters)), 'r');
   GetMem(Buffer, BufferSize);
-  if Assigned(Output) then
+  if Assigned(FOutput) then
     try
-      FReadFromPipeStr:= '0;';
-      Synchronize(InputToMemo);
-//      FReadFromPipeStr:= IntToStr(getpid());
-//      Synchronize(InputToMemo);
-      FReadFromPipeStr:= '1;';
-      Synchronize(InputToMemo);
-      while feof(Output) = 0 do
+      fcntl(fileno(FOutput), F_SETFL, O_NONBLOCK);
+      while feof(FOutput) = 0 do
         begin
-          FReadFromPipeStr:= '2;';
-          Synchronize(InputToMemo);
-          BytesRead:= fread(Buffer, 1, BufferSize, Output);
-//          BytesRead:= fread_unlocked(Buffer, 1, BufferSize, Output);
-          FReadFromPipeStr:= 'Read:' + IntToStr(BytesRead);
-          Synchronize(InputToMemo);
-          SetLength(TempString, Length(TempString) + BytesRead);
-          Move(Buffer^, TempString[length(TempString) - (BytesRead - 1)], BytesRead);
-          FReadFromPipeStr:= '!' + TempString + '!';
-          Synchronize(InputToMemo);
-          while Pos(#10, TempString) > 0 do
+          BytesRead:= fread(Buffer, 1, BufferSize, FOutput);
+          if (BytesRead > 0) then
             begin
-              Line:= Copy(TempString, 1, Pos(#10, TempString) - 1);
-              FReadFromPipeStr:= UTF8ToString(Line);
+              SetLength(TempString, Length(TempString) + BytesRead);
+              Move(Buffer^, TempString[length(TempString) - (BytesRead - 1)], BytesRead);
+              FReadFromPipeStr:= string(TempString);
               AppendOutputToLog(FReadFromPipeStr);
               Synchronize(InputToMemo);
-              TempString:= Copy(TempString, Pos(#10, TempString) + 1, Length(TempString));
             end;
+
+//          if fgets(Buffer, BufferSize, FOutput) <> null  then
+//            begin
+//              FReadFromPipeStr:= string(Buffer);
+//              Synchronize(InputToMemo);
+//            end;
         end;
     finally
-      pclose(output);
+      pclose(FOutput);
       wait(nil);
       FreeMem(Buffer, BufferSize);
     end;
@@ -260,7 +261,6 @@ begin
     else
       begin
         FReadFromPipeStr:= '*************************** begin ***************************' + #13 + #10;
-
         AppendOutputToLog(FReadFromPipeStr);
         Synchronize(InputToMemo);
 
