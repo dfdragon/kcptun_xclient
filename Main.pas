@@ -46,7 +46,8 @@ uses
   FMX.Header,
   FMX.Graphics,
 
-  Posix.Stdlib,
+  Posix.Stdlib, Class_TrayItem,
+  Macapi.Foundation, Macapi.AppKit, Macapi.Helpers,
 
   PublicVar, FMX.ListView.Types, FMX.ListView, Xml.XMLIntf, Xml.XMLDoc;
 
@@ -140,13 +141,6 @@ type
     CheckBox_KeepAlive: TCheckBox;
     Label_KeepAlive: TLabel;
     Edit_KeepAlive: TEdit;
-    PopupMenu_Tray: TPopupMenu;
-    Menu_Show: TMenuItem;
-    N2: TMenuItem;
-    Menu_StartAll: TMenuItem;
-    Menu_StopAll: TMenuItem;
-    N5: TMenuItem;
-    Menu_Exit: TMenuItem;
     CheckBox_Minimize: TCheckBox;
     CheckBox_AutoExpire: TCheckBox;
     Label_AutoExpire: TLabel;
@@ -169,27 +163,22 @@ type
     SaveDialog_JSON: TSaveDialog;
     ListBox_Node: TListBox;
     ListBoxGroupHeader1: TListBoxGroupHeader;
-    Label1: TLabel;
+    Label_KcpTun: TLabel;
+    Image_CMDLine: TImage;
+    Image_ClearLog: TImage;
     procedure Btn_AddNodeClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Btn_FindClientEXEClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    procedure CheckBox_AutoStartClick(Sender: TObject);
     procedure ComboBox_CryptChange(Sender: TObject);
     procedure ComboBox_ModeChange(Sender: TObject);
     procedure Btn_StartClick(Sender: TObject);
     procedure Btn_StopClick(Sender: TObject);
     procedure Btn_DeleteNodeClick(Sender: TObject);
-    procedure Menu_ShowClick(Sender: TObject);
-    procedure Menu_ExitClick(Sender: TObject);
     procedure TrayIcon_SysClick(Sender: TObject);
     procedure Memo_CMDLineDblClick(Sender: TObject);
-    procedure CheckBox_MinimizeClick(Sender: TObject);
     procedure Edit_LocalPortKeyPress(Sender: TObject; var Key: Char);
     procedure Btn_StartAllClick(Sender: TObject);
     procedure Btn_StopAllClick(Sender: TObject);
-    procedure Menu_StartAllClick(Sender: TObject);
-    procedure Menu_StopAllClick(Sender: TObject);
     procedure SpeedBtn_CMDLineClick(Sender: TObject);
     procedure SpeedBtn_ClearLogClick(Sender: TObject);
     procedure Btn_FindConfigFileDirClick(Sender: TObject);
@@ -199,7 +188,7 @@ type
     procedure Menu_JSONClick(Sender: TObject);
     procedure Menu_CopyClick(Sender: TObject);
     procedure ListBox_NodeClick(Sender: TObject);
-    procedure Label1Click(Sender: TObject);
+    procedure Label_KcpTunClick(Sender: TObject);
     procedure ListBox_NodeDblClick(Sender: TObject);
     procedure Edit_RemarkChangeTracking(Sender: TObject);
     procedure Edit_ClientEXEDirChangeTracking(Sender: TObject);
@@ -240,6 +229,10 @@ type
     procedure CheckBox_KeepAliveChange(Sender: TObject);
     procedure CheckBox_SockBufChange(Sender: TObject);
     procedure CheckBox_ConfigFileDirChange(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure CheckBox_MinimizeChange(Sender: TObject);
+    procedure CheckBox_AutoStartChange(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
 //    procedure WMSYSCommand(var Msg: TWMSysCommand); message WM_SYSCOMMAND;
@@ -252,6 +245,7 @@ type
 
 var
   FMain: TFMain;
+  TrayItem: TFMXTrayItem;
 
 implementation
 
@@ -384,6 +378,8 @@ var
 begin
   for i := 0 to (ListBox_Node.Count - 1) do
     begin
+      if (ListBox_Node.ListItems[i] is TListBoxGroupHeader) then
+        Continue;
       ClientNode:= TClientNode(ListBox_Node.ListItems[i].Data);
       if (ClientNode.isRunCMD = 0) then
         begin
@@ -416,6 +412,8 @@ var
 begin
   for i := 0 to (ListBox_Node.Count - 1) do
     begin
+      if (ListBox_Node.ListItems[i] is TListBoxGroupHeader) then
+        Continue;
       ClientNode:= TClientNode(ListBox_Node.ListItems[i].Data);
       if (ClientNode.isRunCMD = 1) then
         begin
@@ -465,7 +463,7 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isAutoExpire:= Integer(CheckBox_AutoExpire.isChecked);
 end;
 
-procedure TFMain.CheckBox_AutoStartClick(Sender: TObject);
+procedure TFMain.CheckBox_AutoStartChange(Sender: TObject);
 begin
 //  PublicVar.AutoStart:= Integer(CheckBox_AutoStart.isChecked);
 //  if not PublicVar.CanModifyXML then
@@ -640,7 +638,7 @@ begin
   TClientNode(ListBox_Node.Selected.Data).isKey:= Integer(CheckBox_Key.isChecked);
 end;
 
-procedure TFMain.CheckBox_MinimizeClick(Sender: TObject);
+procedure TFMain.CheckBox_MinimizeChange(Sender: TObject);
 begin
   PublicVar.Minimize:= Integer(CheckBox_Minimize.isChecked);
   if not PublicVar.CanModifyXML then
@@ -1031,8 +1029,35 @@ begin
   TClientNode(ListBox_Node.Selected.Data).SockBuf:= Edit_SockBuf.Text;
 end;
 
+procedure TFMain.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  i: Integer;
+  ClientNode: TClientNode;
+begin
+  for i := 0 to (ListBox_Node.Count - 1) do
+    begin
+      if (ListBox_Node.ListItems[i] is TListBoxGroupHeader) then
+        Continue;
+      ClientNode:= TClientNode(ListBox_Node.ListItems[i].Data);
+      if (ClientNode.isRunCMD = 1) then
+        begin
+          ClientNode.CorrectQuit:= True;
+          ClientNode.StopCommand;
+        end;
+      ClientNode.Free;
+    end;
+end;
+
+procedure TFMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  CanClose:= PublicVar.CanCloseMain;
+  if not PublicVar.CanCloseMain then
+    Self.Hide;
+end;
+
 procedure TFMain.FormCreate(Sender: TObject);
 var
+  FilePath: string;
 //  MyMenu_Photo: HMENU;
   i: Integer;
   ClientXMLNode: IXMLNode;
@@ -1041,6 +1066,7 @@ var
   NodeItem: TListBoxItem;
   ShowCaption, CommandLine: string;
 begin
+  PublicVar.CanCloseMain:= False;
 //  DragAcceptFiles(Handle, True);
   Interface_op.WriteHint_ModeDefault;
   Self.Caption:= Self.Caption + '      ³ÌÐò°æ±¾£º' + PublicVar.FileVer;
@@ -1055,10 +1081,15 @@ begin
   Edit_Remark.Enabled:= False;
 //  Edit_Remark.Color:= clBtnFace;
 
-  OpenDialog_ClientEXE.InitialDir:= ExtractFilePath(ParamStr(0));
-  OpenDialog_JSON.InitialDir:= ExtractFilePath(ParamStr(0));
-  SaveDialog_JSON.InitialDir:= ExtractFilePath(ParamStr(0));
-  PublicVar.ParaXMLPathName:= ExtractFilePath(ParamStr(0)) + 'kcptun.xml';
+//  OpenDialog_ClientEXE.InitialDir:= ExtractFilePath(ParamStr(0));
+//  OpenDialog_JSON.InitialDir:= ExtractFilePath(ParamStr(0));
+//  SaveDialog_JSON.InitialDir:= ExtractFilePath(ParamStr(0));
+//  PublicVar.ParaXMLPathName:= ExtractFilePath(ParamStr(0)) + 'kcptun.xml';
+  FilePath:= ExtractFilePath(string(TNSBundle.Wrap(TNSBundle.OCClass.mainBundle).bundlePath.UTF8String));
+  OpenDialog_ClientEXE.InitialDir:= FilePath;
+  OpenDialog_JSON.InitialDir:= FilePath;
+  SaveDialog_JSON.InitialDir:= FilePath;
+  PublicVar.ParaXMLPathName:= FilePath + 'kcptun.xml';
 //  ShowMessage(PublicVar.ParaXMLPathName);
   if not FileExists(PublicVar.ParaXMLPathName) then
     begin
@@ -1081,7 +1112,10 @@ begin
     end;
 
   if (PublicVar.Minimize = 1) then
-    FMain.WindowState:= TWindowState.wsMinimized
+    begin
+      FMain.WindowState:= TWindowState.wsMinimized;
+      FMain.Hide;
+    end
   else
     FMain.WindowState:= TWindowState.wsNormal;
 
@@ -1109,33 +1143,18 @@ begin
         begin
           CommandLine:= ClientNode.CreateCMDLine(PublicVar.ClientEXEDir);
           ClientNode.RunCommand(CommandLine);
+          ClientNode.RunState:= '1';
         end;
     end;
   ListBox_Node.Repaint;
 end;
 
-procedure TFMain.FormDestroy(Sender: TObject);
-var
-  i: Integer;
-  ClientNode: TClientNode;
+procedure TFMain.Label_KcpTunClick(Sender: TObject);
+//var
+//  URL: NSURL;
 begin
-  for i := 0 to (ListBox_Node.Count - 1) do
-    begin
-      ClientNode:= TClientNode(ListBox_Node.ListItems[i].Data);
-      if (ClientNode.isRunCMD = 1) then
-        begin
-          ClientNode.CorrectQuit:= True;
-          ClientNode.StopCommand;
-        end;
-      ClientNode.Free;
-    end;
-end;
-
-procedure TFMain.Label1Click(Sender: TObject);
-begin
-//  1:  _system(PAnsiChar('open ' + AnsiString(SelfUpdateURL)));
-//    2:  _system(PAnsiChar('open ' + AnsiString(IssuesURL)));
-//    3:  _system(PAnsiChar('open ' + AnsiString(KcpTunClientDownloadURL)));
+//  URL:= TNSURL.Wrap(TNSURL.OCClass.FileURLWithPath(StrToNSStr(KcpTunClientDownloadURL)));
+//  TNSWorkspace.Wrap(TNSWorkspace.OCClass.sharedWorkspace).openURL(URL);
 end;
 
 procedure TFMain.ListBox_NodeClick(Sender: TObject);
@@ -1166,7 +1185,7 @@ begin
 
   ClientNode.Memo_Log:= Memo_Log;
   Memo_Log.Lines.Text:= ClientNode.WholeLog + ClientNode.GetWholeCommandOutput;
-//  Memo_Log.SelStart:= Length(Memo_Log.Lines.Text);
+  Memo_Log.SelStart:= Length(Memo_Log.Lines.Text);
 //  SendMessage(Memo_Log.Handle, WM_VSCROLL, MAKELONG(SB_BOTTOM, 0), 0);
 
   Btn_DeleteNode.Enabled:= True;
@@ -1190,25 +1209,9 @@ begin
   FPhoto.ShowModal;
 end;
 
-procedure TFMain.Menu_ShowClick(Sender: TObject);
-begin
-  FMain.Visible:= True;
-  FMain.WindowState:= TWindowState.wsNormal;
-end;
-
-procedure TFMain.Menu_StartAllClick(Sender: TObject);
-begin
-  Btn_StartAllClick(Self);
-end;
-
 procedure TFMain.Menu_StartClick(Sender: TObject);
 begin
   Btn_StartClick(Self);
-end;
-
-procedure TFMain.Menu_StopAllClick(Sender: TObject);
-begin
-  Btn_StopAllClick(Self);
 end;
 
 procedure TFMain.Menu_StopClick(Sender: TObject);
@@ -1273,11 +1276,6 @@ begin
   Btn_DeleteNodeClick(Self);
 end;
 
-procedure TFMain.Menu_ExitClick(Sender: TObject);
-begin
-  Close;
-end;
-
 procedure TFMain.Menu_JSONClick(Sender: TObject);
 var
   ClientNode: TClientNode;
@@ -1339,8 +1337,10 @@ begin
 end;
 
 initialization
-//  MessageID:= RegisterWindowMessage(UniqueAppStr);
-//  InitInstance;
+  TrayItem:= TFMXTrayItem.Create;
+
+finalization
+  TrayItem.Free;
 
 end.
 

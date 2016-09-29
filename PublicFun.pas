@@ -46,6 +46,8 @@ uses
   FMX.Header,
   FMX.Graphics,
 
+  Macapi.Foundation, Macapi.Helpers,
+
   Xml.XMLIntf, Xml.XMLDoc, Macapi.CoreFoundation;
 
 //**   Original VCL Uses section : 
@@ -139,27 +141,16 @@ end;
 
 //procedure WriteREGAutoRun(AutoStart: Integer; FileFullName: string);
 //var
-//  Reg: TRegistry;
+//  loginItems: LSSharedFileListRef;
+//  url: string;
+//  item: LSSharedFileListItemRef;
 //begin
-//  Reg:= TRegistry.Create;
-//  try
-//    Reg.RootKey:= HKEY_LOCAL_MACHINE;
-//    Reg.OpenKey('SOFTWARE\Microsoft\Windows\CurrentVersion\Run', True);
-//    try
-//      if AutoStart = 0 then
-//        begin
-//          Reg.DeleteValue('KCPTun 客户端配置管理工具');
-//        end
-//      else
-//        begin
-//          Reg.WriteString('KCPTun 客户端配置管理工具', FileFullName);
-//        end;
-//    finally
-//      Reg.CloseKey;
-//    end;//try
-//  finally
-//    Reg.Free;
-//  end;//try
+//  loginItems:= LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
+//  //url为app所在的目录
+//  url:= TNSBundle.Wrap(TNSBundle.OCClass.mainBundle).bundlePath.UTF8String;
+//  item = LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemLast, NULL, NULL, StrToNSStr(url), NULL, NULL);
+//  CFRelease(item);
+//  CFRelease(loginItems);
 //end;
 
 end.

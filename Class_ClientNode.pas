@@ -268,6 +268,7 @@ type
     function CreateJSONConfig(): string;
 //    function GetHandle(): THandle;
     function GetOutput(): PIOFile;
+    function GetPID(): Integer;
     function RunCommand(CommandLine: string): Integer;
     function StopCommand(): Integer;
 
@@ -1048,8 +1049,7 @@ begin
             CMDLine:= CMDLine + ' -nc 0';
         end;
     end;
-
-  Result:= Trim(CMDLine) + ' 2>&1';
+  Result:= Trim(CMDLine);
 end;
 
 function TClientNode.CreateJSONConfig(): string;
@@ -1127,6 +1127,11 @@ begin
   Result:= FCMDThread.Output;
 end;
 
+function TClientNode.GetPID(): Integer;
+begin
+  Result:= FCMDThread.CMDPID;
+end;
+
 function TClientNode.RunCommand(CommandLine: string): Integer;
 begin
   FCMDThread:= TExecCommand_Thread.Create(CommandLine, True);
@@ -1140,7 +1145,8 @@ end;
 function TClientNode.StopCommand(): Integer;
 begin
 //  TerminateProcess(GetHandle(), 0);
-  pclose(GetOutput());
+  kill(GetPID(), 9);
+//  kill(GetPID(), 15);
   while FCMDThread.ThreadState <> 2 do
     Application.ProcessMessages;
   FWholeLog:= FWholeLog + FCMDThread.GetWholeLog;

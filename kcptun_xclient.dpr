@@ -1,5 +1,9 @@
 program kcptun_xclient;
 
+
+
+
+
 uses
   FMX.Forms,
   Main in 'Main.pas' {FMain},
@@ -9,7 +13,8 @@ uses
   Photo in 'Photo.pas' {FPhoto},
   PublicFun in 'PublicFun.pas',
   PublicVar in 'PublicVar.pas',
-  Thread_ExecCommand in 'Thread_ExecCommand.pas';
+  Thread_ExecCommand in 'Thread_ExecCommand.pas',
+  Class_TrayItem in 'Class_TrayItem.pas';
 
 {$R *.res}
 

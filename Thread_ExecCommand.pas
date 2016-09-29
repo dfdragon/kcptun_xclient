@@ -80,6 +80,7 @@ type
     FCommandLine: string;       //待执行的命令行
 //    FCMDHandle: THandle;        //控制台程序句柄
     FOutput: PIOFile;
+    FCMDPID: Integer;
     FMemo_Log: TMemo;
     FCorrectQuit: Boolean;      //是否是正常的退出
 
@@ -96,6 +97,7 @@ type
     property MainFormHandle: TWindowHandle read FMainFormHandle write FMainFormHandle;
 //    property CMDHandle: THandle read FCMDHandle;
     property Output: PIOFile read FOutput;
+    property CMDPID: Integer read FCMDPID;
     property Memo_Log: TMemo read FMemo_Log write SetMemo_log;
     property CorrectQuit: Boolean read FCorrectQuit write FCorrectQuit;
 
@@ -131,12 +133,133 @@ function fgets(Ptr: Pointer; N: LongWord; Stream: PIOFile): LongWord; cdecl; ext
 function fileno(Stream: PIOFile): Integer; cdecl; external libc name '_fileno';
 function fcntl(fd: Integer; cmd: Integer; arg: Integer): LongWord; cdecl; external libc name '_fcntl';
 
+function pipe(fd: Pointer): Integer; cdecl; external libc name '_pipe';
+function fork(): Integer; cdecl; external libc name '_fork';
+procedure perror(char: PAnsiChar); cdecl; external libc name '_perror';
+function close(fd: Integer): Integer; cdecl; external libc name '_close';
+function dup2(oldfd: Integer; newfd: Integer): Integer; cdecl; external libc name '_dup2';
+function execl(path: PAnsiChar; argv1: PAnsiChar; argv2: PAnsiChar; argv3: PAnsiChar; argv4: PAnsiChar): Integer; cdecl; external libc name '_execl';
+function fdopen(fd: Integer; mode: PAnsiChar): Integer; cdecl; external libc name '_fdopen';
+function kill(pid: Integer; sig: Integer): Integer; cdecl; external libc name '_kill';
+function killpg(pid: Integer; sig: Integer): Integer; cdecl; external libc name '_killpg';
+function getpgrp(): Integer; cdecl; external libc name '_getpgrp';
+
 implementation
 
 uses
   PublicVar;
 
 { TExecCommand_Thread }
+
+function popen2(const Command: PAnsiChar; Modes: PAnsiChar; var pid: Integer): PIOFile;
+const
+  m_READ = 0;
+  m_WRITE = 1;
+var
+  child_pid: Integer;
+  fd: array[0..2] of Integer;
+begin
+  pipe(@fd);
+  child_pid:= fork();
+  if (child_pid = -1) then
+    begin
+      perror('fork');
+      Result:= Pointer(1);
+      Exit;
+    end;
+
+  if (child_pid = 0) then
+    begin
+      if (Modes = 'r')  then
+        begin
+          close(fd[m_READ]);    //Close the READ end of the pipe since the child's fd is write-only
+          dup2(fd[m_WRITE], 1); //Redirect stdout to pipe
+        end
+      else
+        begin
+          close(fd[m_WRITE]);    //Close the WRITE end of the pipe since the child's fd is read-only
+          dup2(fd[m_READ], 0);   //Redirect stdin to pipe
+        end;
+      execl('/bin/sh', 'sh', '-c', command, nil);
+      Result:= Pointer(0);
+      Exit;
+    end
+  else
+    begin
+      if (Modes = 'r')  then
+        begin
+          close(fd[m_WRITE]); //Close the WRITE end of the pipe since parent's fd is read-only
+        end
+      else
+        begin
+          close(fd[m_READ]); //Close the READ end of the pipe since parent's fd is write-only
+        end;
+    end;
+  pid:= child_pid;
+//  pid:= getpgrp();    //取GPID
+
+  if (Modes = 'r')  then
+    begin
+      Result:= Pointer(fdopen(fd[m_READ], 'r'));
+      Exit;
+    end;
+  Result:= Pointer(fdopen(fd[m_WRITE], 'w'));
+end;
+
+function popen3(const Command: PAnsiChar; Modes: PAnsiChar; var pid: Integer): PIOFile;
+const
+  m_READ = 0;
+  m_WRITE = 1;
+  m_ERROR = 2;
+var
+  child_pid: Integer;
+  fd: array[0..2] of Integer;
+begin
+  pipe(@fd);
+  child_pid:= fork();
+  if (child_pid = -1) then
+    begin
+      perror('fork');
+      Result:= Pointer(1);
+      Exit;
+    end;
+
+  if (child_pid = 0) then     //子进程
+    begin
+      if (Modes = 'r')  then
+        begin
+          close(fd[m_READ]);    //Close the READ end of the pipe since the child's fd is write-only
+          dup2(fd[m_WRITE], 2); //Redirect stdout to pipe
+        end
+      else
+        begin
+          close(fd[m_WRITE]);    //Close the WRITE end of the pipe since the child's fd is read-only
+          dup2(fd[m_READ], 0);   //Redirect stdin to pipe
+        end;
+      execl('/bin/sh', 'sh', '-c', command, nil);
+      Result:= Pointer(0);
+      Exit;
+    end
+  else
+    begin                     //父进程
+      if (Modes = 'r')  then
+        begin
+          close(fd[m_WRITE]); //Close the WRITE end of the pipe since parent's fd is read-only
+        end
+      else
+        begin
+          close(fd[m_READ]); //Close the READ end of the pipe since parent's fd is write-only
+        end;
+    end;
+  pid:= child_pid;
+
+  if (Modes = 'r')  then
+    begin
+      Result:= Pointer(fdopen(fd[m_READ], 'r'));
+      Exit;
+    end;
+  Result:= Pointer(fdopen(fd[m_WRITE], 'w'));
+end;
 
 procedure TExecCommand_Thread.SetMemo_log(const Value: TMemo);
 begin
@@ -165,14 +288,18 @@ procedure TExecCommand_Thread.CaptureConsoleOutput(const ACommand, AParameters: 
 const
   BufferSize: Integer = 115200;
 var
-//  Output: PIOFile;
   Buffer: PAnsiChar;
   TempString: AnsiString;
   BytesRead: Integer;
 begin
   TempString:= '';
-//  FOutput:= popen(PAnsiChar(Ansistring(ACommand + ' ' + AParameters + ' 2>&1')), 'r');
-  FOutput:= popen(PAnsiChar(Ansistring(ACommand + ' ' + AParameters)), 'r');
+//  FOutput:= popen(PAnsiChar(Ansistring(ACommand + ' ' + AParameters)), 'r');
+//  FOutput:= popen2(PAnsiChar(Ansistring(ACommand + ' ' + AParameters)), 'r', FCMDPID);
+  FOutput:= popen3(PAnsiChar(Ansistring(ACommand + ' ' + AParameters)), 'r', FCMDPID);
+//  FReadFromPipeStr:= Integer(FCMDPID).ToString + #13 + #10;
+//  AppendOutputToLog(FReadFromPipeStr);
+//  Synchronize(InputToMemo);
+
   GetMem(Buffer, BufferSize);
   if Assigned(FOutput) then
     try
@@ -187,11 +314,14 @@ begin
               FReadFromPipeStr:= string(TempString);
               AppendOutputToLog(FReadFromPipeStr);
               Synchronize(InputToMemo);
+              TempString:= '';
             end;
+          Sleep(200);
 
 //          if fgets(Buffer, BufferSize, FOutput) <> null  then
 //            begin
 //              FReadFromPipeStr:= string(Buffer);
+//              AppendOutputToLog(FReadFromPipeStr);
 //              Synchronize(InputToMemo);
 //            end;
         end;

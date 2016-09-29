@@ -5,7 +5,7 @@
         <FrameworkType>FMX</FrameworkType>
         <MainSource>kcptun_xclient.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">OSX32</Platform>
         <TargetedPlatforms>4</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -88,10 +88,11 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_OSX32)'!=''">
-        <Icns_MainIcns>k.icns</Icns_MainIcns>
+        <VerInfo_Keys>CFBundleName=$(MSBuildProjectName);CFBundleDisplayName=$(MSBuildProjectName);CFBundleIdentifier=$(MSBuildProjectName);CFBundleVersion=1.0.0;CFBundlePackageType=APPL;CFBundleSignature=????;CFBundleAllowMixedLocalizations=YES;CFBundleExecutable=$(MSBuildProjectName);NSHighResolutionCapable=true;LSApplicationCategoryType=public.app-category.utilities;NSBGOnly=0</VerInfo_Keys>
+        <Icns_MainIcns>icons\k.icns</Icns_MainIcns>
         <Debugger_Launcher>/usr/X11/bin/xterm -e &quot;%debuggee%&quot;</Debugger_Launcher>
-        <Manifest_File>None</Manifest_File>
-        <Icon_MainIcon>k.ico</Icon_MainIcon>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <Icon_MainIcon>icons\k.ico</Icon_MainIcon>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
@@ -121,6 +122,7 @@
         <DCCReference Include="PublicFun.pas"/>
         <DCCReference Include="PublicVar.pas"/>
         <DCCReference Include="Thread_ExecCommand.pas"/>
+        <DCCReference Include="Class_TrayItem.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -149,7 +151,7 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment>
-                <DeployFile LocalName="k.icns" Configuration="Debug" Class="ProjectOSXResource">
+                <DeployFile LocalName="icons\k.icns" Configuration="Debug" Class="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteName>kcptun_xclient.icns</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -163,9 +165,42 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="icons\k.png" Class="File">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\Resources\</RemoteDir>
+                        <RemoteName>k.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                    <Platform Name="Win64">
+                        <RemoteName>k.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <RemoteName>k.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="OSX32\Debug\kcptun_xclient.info.plist" Configuration="Debug" Class="ProjectOSXInfoPList">
                     <Platform Name="OSX32">
                         <RemoteName>Info.plist</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="OSX32\Debug\kcptun_xclient" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="OSX32">
+                        <RemoteName>kcptun_xclient</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="OSX32\Release\kcptun_xclient.entitlements" Configuration="Release" Class="ProjectOSXEntitlements">
+                    <Platform Name="OSX32">
+                        <RemoteName>Entitlements.plist</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="OSX32\Debug\kcptun_xclient.entitlements" Configuration="Debug" Class="ProjectOSXEntitlements">
+                    <Platform Name="OSX32">
+                        <RemoteName>Entitlements.plist</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -176,15 +211,21 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\kcptun_xclient" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="$(BDS)\bin\delphi_PROJECTICNS.icns" Configuration="Release" Class="ProjectOSXResource">
+                    <Platform Name="OSX32">
+                        <RemoteName>kcptun_xclient.icns</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="OSX32\Release\kcptun_xclient" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="OSX32">
                         <RemoteName>kcptun_xclient</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\kcptun_xclient.entitlements" Configuration="Debug" Class="ProjectOSXEntitlements">
+                <DeployFile LocalName="OSX32\Release\kcptun_xclient.info.plist" Configuration="Release" Class="ProjectOSXInfoPList">
                     <Platform Name="OSX32">
-                        <RemoteName>Entitlements.plist</RemoteName>
+                        <RemoteName>Info.plist</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

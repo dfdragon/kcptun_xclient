@@ -77,6 +77,8 @@ var
   CanFoucs: Boolean;
   ModeCanFouse: Boolean;
 
+  CanCloseMain: Boolean;
+
 implementation
 
 end.
