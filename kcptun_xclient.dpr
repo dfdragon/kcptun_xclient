@@ -1,9 +1,5 @@
 program kcptun_xclient;
 
-
-
-
-
 uses
   FMX.Forms,
   Main in 'Main.pas' {FMain},
@@ -21,8 +17,14 @@ uses
 begin
   Application.Initialize;
   PublicVar.FileVer:= PublicFun.GetAppVersionStr;
-//  Application.CreateForm(TFMain, FMain);
   Application.CreateForm(TFMain, FMain);
+  Application.RealCreateForms;
+
+  if (PublicVar.Minimize = 1) then
+    begin
+      Application.MainForm.Hide;
+    end;
+
   Application.CreateForm(TFPhoto, FPhoto);
   Application.Run;
 end.

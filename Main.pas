@@ -1090,7 +1090,6 @@ begin
   OpenDialog_JSON.InitialDir:= FilePath;
   SaveDialog_JSON.InitialDir:= FilePath;
   PublicVar.ParaXMLPathName:= FilePath + 'kcptun.xml';
-//  ShowMessage(PublicVar.ParaXMLPathName);
   if not FileExists(PublicVar.ParaXMLPathName) then
     begin
       //参数文件不存在，新建文件
@@ -1111,13 +1110,15 @@ begin
       Application.Terminate;
     end;
 
-  if (PublicVar.Minimize = 1) then
-    begin
-      FMain.WindowState:= TWindowState.wsMinimized;
-      FMain.Hide;
-    end
-  else
-    FMain.WindowState:= TWindowState.wsNormal;
+//  if (PublicVar.Minimize = 1) then
+//    begin
+//      FMain.WindowState:= TWindowState.wsMinimized;
+//      FMain.Hide;
+//    end
+//  else
+//    begin
+//      FMain.WindowState:= TWindowState.wsNormal;
+//    end;
 
   for i := 0 to (PublicVar.ClientNodes.ChildNodes.Count - 1) do
     begin
