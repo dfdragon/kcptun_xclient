@@ -49,7 +49,8 @@ uses
   Posix.Stdlib, Class_TrayItem,
   Macapi.Foundation, Macapi.AppKit, Macapi.Helpers,
 
-  PublicVar, FMX.ListView.Types, FMX.ListView, Xml.XMLIntf, Xml.XMLDoc;
+  PublicVar, FMX.ListView.Types, FMX.ListView, Xml.XMLIntf, Xml.XMLDoc,
+  FMX.ScrollBox, FMX.Controls.Presentation;
 
 
 
@@ -166,6 +167,9 @@ type
     Label_KcpTun: TLabel;
     Image_CMDLine: TImage;
     Image_ClearLog: TImage;
+    Popup_Hint: TPopup;
+    CalloutPanel_Hint: TCalloutPanel;
+    Label_Hint: TLabel;
     procedure Btn_AddNodeClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Btn_FindClientEXEClick(Sender: TObject);
@@ -233,6 +237,8 @@ type
     procedure CheckBox_MinimizeChange(Sender: TObject);
     procedure CheckBox_AutoStartChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure Edit_KCPServerPortMouseEnter(Sender: TObject);
+    procedure Edit_KCPServerPortMouseLeave(Sender: TObject);
   private
     { Private declarations }
 //    procedure WMSYSCommand(var Msg: TWMSysCommand); message WM_SYSCOMMAND;
@@ -935,6 +941,16 @@ begin
   if (ClientNode.Remark.Trim <> '') then
     ShowCaption:= ClientNode.Remark.Trim + '(' + ShowCaption + ')';
   ListBox_Node.Selected.Text:= ShowCaption;
+end;
+
+procedure TFMain.Edit_KCPServerPortMouseEnter(Sender: TObject);
+begin
+  Popup_Hint.IsOpen:= True;
+end;
+
+procedure TFMain.Edit_KCPServerPortMouseLeave(Sender: TObject);
+begin
+  Popup_Hint.IsOpen:= False;
 end;
 
 procedure TFMain.Edit_KeepAliveChangeTracking(Sender: TObject);

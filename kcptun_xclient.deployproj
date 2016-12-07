@@ -3,12 +3,29 @@
     <ProjectExtensions>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>
-    <ItemGroup Condition="'$(Platform)'=='Android'"/>
-    <ItemGroup Condition="'$(Platform)'=='iOSDevice'"/>
+    <PropertyGroup>
+        <DeviceId Condition="'$(Platform)'=='Android'"/>
+        <DeviceId Condition="'$(Platform)'=='iOSDevice32'"/>
+        <DeviceId Condition="'$(Platform)'=='iOSSimulator'"/>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(Platform)'=='iOSDevice64'"/>
+    <ItemGroup Condition="'$(Platform)'=='Win64'">
+        <DeployFile Include="icons\k.png">
+            <RemoteDir>kcptun_xclient\</RemoteDir>
+            <RemoteName>k.png</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+    </ItemGroup>
+    <ItemGroup Condition="'$(Platform)'=='iOSDevice32'"/>
     <ItemGroup Condition="'$(Platform)'=='Win32'">
         <DeployFile Include="icons\k.png">
             <RemoteDir>kcptun_xclient\</RemoteDir>
             <RemoteName>k.png</RemoteName>
+            <DeployClass>File</DeployClass>
             <Operation>0</Operation>
             <LocalCommand/>
             <RemoteCommand/>
@@ -16,66 +33,37 @@
         </DeployFile>
     </ItemGroup>
     <ItemGroup Condition="'$(Platform)'=='OSX32'">
-        <DeployFile Include="icons\k.icns" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>kcptun_xclient.app\Contents\Resources\</RemoteDir>
-            <RemoteName>kcptun_xclient.icns</RemoteName>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
-        <DeployFile Include="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib">
-            <RemoteDir>kcptun_xclient.app\Contents\MacOS\</RemoteDir>
-            <RemoteName>libcgunwind.1.0.dylib</RemoteName>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
-        <DeployFile Include="icons\k.png">
-            <RemoteDir>kcptun_xclient.app\Contents\Resources\</RemoteDir>
-            <RemoteName>k.png</RemoteName>
-            <Operation>0</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
         <DeployFile Include="OSX32\Debug\kcptun_xclient.info.plist" Condition="'$(Config)'=='Debug'">
             <RemoteDir>kcptun_xclient.app\Contents\</RemoteDir>
             <RemoteName>Info.plist</RemoteName>
+            <DeployClass>ProjectOSXInfoPList</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="OSX32\Debug\kcptun_xclient" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>kcptun_xclient.app\Contents\MacOS\</RemoteDir>
-            <RemoteName>kcptun_xclient</RemoteName>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-            <Required>True</Required>
-        </DeployFile>
-        <DeployFile Include="OSX32\Release\kcptun_xclient.entitlements" Condition="'$(Config)'=='Release'">
-            <RemoteDir>kcptun_xclient.app\Contents\</RemoteDir>
-            <RemoteName>Entitlements.plist</RemoteName>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
-        <DeployFile Include="OSX32\Debug\kcptun_xclient.entitlements" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>kcptun_xclient.app\Contents\</RemoteDir>
-            <RemoteName>Entitlements.plist</RemoteName>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
-        <DeployFile Include="$(BDS)\bin\delphi_PROJECTICNS.icns" Condition="'$(Config)'=='Release'">
+        <DeployFile Include="icons\k.icns" Condition="'$(Config)'=='Debug'">
             <RemoteDir>kcptun_xclient.app\Contents\Resources\</RemoteDir>
             <RemoteName>kcptun_xclient.icns</RemoteName>
+            <DeployClass>ProjectOSXResource</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="OSX32\Release\kcptun_xclient.info.plist" Condition="'$(Config)'=='Release'">
+            <RemoteDir>kcptun_xclient.app\Contents\</RemoteDir>
+            <RemoteName>Info.plist</RemoteName>
+            <DeployClass>ProjectOSXInfoPList</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\Redist\osx32\libcgsqlite3.dylib">
+            <RemoteDir>kcptun_xclient.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>libcgsqlite3.dylib</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
@@ -84,35 +72,84 @@
         <DeployFile Include="OSX32\Release\kcptun_xclient" Condition="'$(Config)'=='Release'">
             <RemoteDir>kcptun_xclient.app\Contents\MacOS\</RemoteDir>
             <RemoteName>kcptun_xclient</RemoteName>
+            <DeployClass>ProjectOutput</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
             <Required>True</Required>
         </DeployFile>
-        <DeployFile Include="OSX32\Release\kcptun_xclient.info.plist" Condition="'$(Config)'=='Release'">
-            <RemoteDir>kcptun_xclient.app\Contents\</RemoteDir>
-            <RemoteName>Info.plist</RemoteName>
+        <DeployFile Include="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib">
+            <RemoteDir>kcptun_xclient.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>libcgunwind.1.0.dylib</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-    </ItemGroup>
-    <ItemGroup Condition="'$(Platform)'=='Win64'">
+        <DeployFile Include="icons\k.icns" Condition="'$(Config)'=='Release'">
+            <RemoteDir>kcptun_xclient.app\Contents\Resources\</RemoteDir>
+            <RemoteName>kcptun_xclient.icns</RemoteName>
+            <DeployClass>ProjectOSXResource</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="OSX32\Release\kcptun_xclient.entitlements" Condition="'$(Config)'=='Release'">
+            <RemoteDir>kcptun_xclient.app\..\</RemoteDir>
+            <RemoteName>Entitlements.plist</RemoteName>
+            <DeployClass>ProjectOSXEntitlements</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="OSX32\Debug\kcptun_xclient.entitlements" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>kcptun_xclient.app\..\</RemoteDir>
+            <RemoteName>Entitlements.plist</RemoteName>
+            <DeployClass>ProjectOSXEntitlements</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
         <DeployFile Include="icons\k.png">
-            <RemoteDir>kcptun_xclient\</RemoteDir>
+            <RemoteDir>kcptun_xclient.app\Contents\Resources\</RemoteDir>
             <RemoteName>k.png</RemoteName>
+            <DeployClass>File</DeployClass>
             <Operation>0</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
+        <DeployFile Include="OSX32\Debug\kcptun_xclient" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>kcptun_xclient.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>kcptun_xclient</RemoteName>
+            <DeployClass>ProjectOutput</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+            <Required>True</Required>
+        </DeployFile>
     </ItemGroup>
+    <ItemGroup Condition="'$(Platform)'=='Android'"/>
     <ItemGroup Condition="'$(Platform)'=='iOSSimulator'">
-        <DeployFile Include="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib">
+        <DeployFile Include="$(BDS)\Redist\iossimulator\libcgunwind.1.0.dylib">
             <RemoteDir>kcptun_xclient.app\</RemoteDir>
             <RemoteName>libcgunwind.1.0.dylib</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\Redist\iossimulator\libPCRE.dylib">
+            <RemoteDir>kcptun_xclient.app\</RemoteDir>
+            <RemoteName>libPCRE.dylib</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
