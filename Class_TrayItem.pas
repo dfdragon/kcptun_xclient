@@ -104,7 +104,8 @@ begin
 
   // Get path to dir
   AppBundle:= TNSBundle.Wrap(TNSBundle.OCClass.mainBundle);
-  Path:= AppBundle.bundlePath.UTF8String + '/Contents/Resources/k.png';
+//  Path:= AppBundle.bundlePath.UTF8String + '/Contents/Resources/k.png';
+  Path:= AppBundle.bundlePath.cString + '/Contents/Resources/k.png';
   NSpImg:= TNSImage.Alloc.initWithContentsOfFile(StrToNSStr(Path));
 
   // Create Icon
