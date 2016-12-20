@@ -45,6 +45,7 @@ uses
   Fmx.StdCtrls,
   FMX.Header,
   FMX.Graphics,
+  FMX.DialogService,
 
   Posix.Stdlib, Class_TrayItem,
   Macapi.Foundation, Macapi.AppKit, Macapi.Helpers,
@@ -345,20 +346,28 @@ procedure TFMain.Btn_DeleteNodeClick(Sender: TObject);
 var
   ClientNode: TClientNode;
 begin
-  if MessageDlg('确定要删除所选中的节点吗？删除后无法恢复！', TMsgDlgType.mtInformation, [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], 0) = MrNo  then
-    Exit;
-  ClientNode:= TClientNode(ListBox_Node.Selected.Data);
-  ClientNode.XMLNode.ParentNode.ChildNodes.Remove(ClientNode.XMLNode);
-  PublicVar.XMLDocument_Para.SaveToFile;
+  TDialogService.MessageDialog('确定要删除所选中的节点吗？删除后无法恢复！', TMsgDlgType.mtInformation, [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], TMsgDlgBtn.mbNo, 0,
+    procedure(const aResult: TModalResult)
+      begin
+        if aResult = mrNo then
+          Exit
+        else
+          begin
+            ClientNode:= TClientNode(ListBox_Node.Selected.Data);
+            ClientNode.XMLNode.ParentNode.ChildNodes.Remove(ClientNode.XMLNode);
+            PublicVar.XMLDocument_Para.SaveToFile;
 
-  if ClientNode.isRunCMD <> 0  then
-    begin
-      ClientNode.CorrectQuit:= True;
-      ClientNode.StopCommand;
-    end;
-  ClientNode.Free;
-  ListBox_Node.Items.Delete(ListBox_Node.Selected.Index);
-  ListBox_NodeClick(Self);
+            if ClientNode.isRunCMD <> 0  then
+              begin
+                ClientNode.CorrectQuit:= True;
+                ClientNode.StopCommand;
+              end;
+            ClientNode.Free;
+            ListBox_Node.Items.Delete(ListBox_Node.Selected.Index);
+            ListBox_NodeClick(Self);
+          end;
+      end
+  );
 end;
 
 procedure TFMain.Btn_FindClientEXEClick(Sender: TObject);
@@ -1101,7 +1110,8 @@ begin
 //  OpenDialog_JSON.InitialDir:= ExtractFilePath(ParamStr(0));
 //  SaveDialog_JSON.InitialDir:= ExtractFilePath(ParamStr(0));
 //  PublicVar.ParaXMLPathName:= ExtractFilePath(ParamStr(0)) + 'kcptun.xml';
-  FilePath:= ExtractFilePath(string(TNSBundle.Wrap(TNSBundle.OCClass.mainBundle).bundlePath.UTF8String));
+//  FilePath:= ExtractFilePath(string(TNSBundle.Wrap(TNSBundle.OCClass.mainBundle).bundlePath.UTF8String));
+  FilePath:= ExtractFilePath(string(TNSBundle.Wrap(TNSBundle.OCClass.mainBundle).bundlePath.cString));
   OpenDialog_ClientEXE.InitialDir:= FilePath;
   OpenDialog_JSON.InitialDir:= FilePath;
   SaveDialog_JSON.InitialDir:= FilePath;
@@ -1122,7 +1132,9 @@ begin
   PublicVar.XMLDocument_Para.Options:= PublicVar.XMLDocument_Para.Options + [doNodeAutoIndent];
   if (Interface_op.GetPublicVarFromXML(ParaXMLPathName) <> 0)  then
     begin
-      MessageDlg('系统参数xml文件损坏，请还原xml文件后重试！', TMsgDlgType.mtInformation, [TMsgDlgBtn.mbOK], 0);
+//      MessageDlg('系统参数xml文件损坏，请还原xml文件后重试！', TMsgDlgType.mtInformation, [TMsgDlgBtn.mbOK], 0);
+      TDialogService.MessageDialog('系统参数xml文件损坏，请还原xml文件后重试！',
+        TMsgDlgType.mtInformation, [TMsgDlgBtn.mbOK], TMsgDlgBtn.mbOK, 0, nil);
       Application.Terminate;
     end;
 
@@ -1145,7 +1157,9 @@ begin
       ClientNode.XMLNode:= ClientXMLNode;
       if (ClientNode.ReadFromXMLNode(ClientXMLNode) <> 0)  then
         begin
-          MessageDlg('读取clientnodes节点时出现错误，请检查或还原xml文件后重试！', TMsgDlgType.mtInformation, [TMsgDlgBtn.mbOK], 0);
+//          MessageDlg('读取clientnodes节点时出现错误，请检查或还原xml文件后重试！', TMsgDlgType.mtInformation, [TMsgDlgBtn.mbOK], 0);
+          TDialogService.MessageDialog('读取clientnodes节点时出现错误，请检查或还原xml文件后重试！',
+            TMsgDlgType.mtInformation, [TMsgDlgBtn.mbOK], TMsgDlgBtn.mbOK, 0, nil);
           Application.Terminate;
         end;
       NodeItem:= TListBoxItem.Create(ListBox_Node);
@@ -1334,8 +1348,8 @@ begin
   if isExcept then
     begin
       HintStr:= '导出参数JSON文件时出现错误，请稍后重试！错误原因为：' + ErrorInfoStr;
-//      Application.MessageBox(PWideChar(HintStr), '提示', MB_OK);
-      MessageDlg(HintStr, TMsgDlgType.mtInformation, [TMsgDlgBtn.mbOK], 0);
+//      MessageDlg(HintStr, TMsgDlgType.mtInformation, [TMsgDlgBtn.mbOK], 0);
+      TDialogService.MessageDialog(HintStr, TMsgDlgType.mtInformation, [TMsgDlgBtn.mbOK], TMsgDlgBtn.mbOK, 0, nil);
     end
   else
     begin
