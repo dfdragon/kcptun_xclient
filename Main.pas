@@ -260,6 +260,8 @@ uses
   Interface_op, Class_ClientNode, OneCopy, PublicFun, Photo;
 
 {$R *.FMX}
+{$R *.Macintosh.fmx MACOS}
+
 {$R photo.RES}
 
 //procedure TFMain.WMSYSCommand;
