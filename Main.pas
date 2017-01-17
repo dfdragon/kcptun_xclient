@@ -171,6 +171,8 @@ type
     Popup_Hint: TPopup;
     CalloutPanel_Hint: TCalloutPanel;
     Label_Hint: TLabel;
+    CheckBox_AllowOnlyLocal: TCheckBox;
+    Label_PID: TLabel;
     procedure Btn_AddNodeClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Btn_FindClientEXEClick(Sender: TObject);
@@ -240,6 +242,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Edit_KCPServerPortMouseEnter(Sender: TObject);
     procedure Edit_KCPServerPortMouseLeave(Sender: TObject);
+    procedure CheckBox_AllowOnlyLocalChange(Sender: TObject);
   private
     { Private declarations }
 //    procedure WMSYSCommand(var Msg: TWMSysCommand); message WM_SYSCOMMAND;
@@ -373,18 +376,39 @@ begin
 end;
 
 procedure TFMain.Btn_FindClientEXEClick(Sender: TObject);
+var
+  RelativePath: string;
 begin
   if not OpenDialog_ClientEXE.Execute then
     Exit;
-  PublicVar.ClientEXEDir:= OpenDialog_ClientEXE.FileName;
-  Edit_ClientEXEDir.Text:= OpenDialog_ClientEXE.FileName;
+  RelativePath:= ExtractRelativePath(ExtractFilePath(string(TNSBundle.Wrap(TNSBundle.OCClass.mainBundle).bundlePath.cString)), ExtractFilePath(OpenDialog_ClientEXE.FileName));
+  if (RelativePath = '') then
+    begin
+      PublicVar.ClientEXEDir:= './' + ExtractFileName(OpenDialog_ClientEXE.FileName);
+      Edit_ClientEXEDir.Text:= './' + ExtractFileName(OpenDialog_ClientEXE.FileName);
+    end
+  else
+    begin
+      PublicVar.ClientEXEDir:= OpenDialog_ClientEXE.FileName;
+      Edit_ClientEXEDir.Text:= OpenDialog_ClientEXE.FileName;
+    end;
 end;
 
 procedure TFMain.Btn_FindConfigFileDirClick(Sender: TObject);
+var
+  RelativePath: string;
 begin
   if not OpenDialog_JSON.Execute then
     Exit;
-  Edit_ConfigFileDir.Text:= OpenDialog_JSON.FileName;
+  RelativePath:= ExtractRelativePath(ExtractFilePath(string(TNSBundle.Wrap(TNSBundle.OCClass.mainBundle).bundlePath.cString)), ExtractFilePath(OpenDialog_ClientEXE.FileName));
+  if (RelativePath = '') then
+    begin
+      Edit_ConfigFileDir.Text:= './' + ExtractFileName(OpenDialog_JSON.FileName);
+    end
+  else
+    begin
+      Edit_ConfigFileDir.Text:= OpenDialog_JSON.FileName;
+    end;
 end;
 
 procedure TFMain.Btn_StartAllClick(Sender: TObject);
@@ -459,6 +483,13 @@ begin
   if ListBox_Node.Selected = nil then
     Exit;
   TClientNode(ListBox_Node.Selected.Data).isACKNoDelay:= Integer(CheckBox_ACKNoDelay.isChecked);
+end;
+
+procedure TFMain.CheckBox_AllowOnlyLocalChange(Sender: TObject);
+begin
+  if ListBox_Node.Selected = nil then
+    Exit;
+  TClientNode(ListBox_Node.Selected.Data).AllowOnlyLocal:= Integer(CheckBox_AllowOnlyLocal.isChecked);
 end;
 
 procedure TFMain.CheckBox_AutoExpireChange(Sender: TObject);
@@ -1114,6 +1145,7 @@ begin
 //  PublicVar.ParaXMLPathName:= ExtractFilePath(ParamStr(0)) + 'kcptun.xml';
 //  FilePath:= ExtractFilePath(string(TNSBundle.Wrap(TNSBundle.OCClass.mainBundle).bundlePath.UTF8String));
   FilePath:= ExtractFilePath(string(TNSBundle.Wrap(TNSBundle.OCClass.mainBundle).bundlePath.cString));
+  chdir(FilePath);
   OpenDialog_ClientEXE.InitialDir:= FilePath;
   OpenDialog_JSON.InitialDir:= FilePath;
   SaveDialog_JSON.InitialDir:= FilePath;
@@ -1194,6 +1226,7 @@ procedure TFMain.ListBox_NodeClick(Sender: TObject);
 var
   i: Integer;
   ClientNode: TClientNode;
+  CMDPID: Int64;
 begin
   PublicVar.CanFoucs:= False;
   Memo_CMDLine.Lines.Clear;
@@ -1220,6 +1253,19 @@ begin
   Memo_Log.Lines.Text:= ClientNode.WholeLog + ClientNode.GetWholeCommandOutput;
   Memo_Log.SelStart:= Length(Memo_Log.Lines.Text);
 //  SendMessage(Memo_Log.Handle, WM_VSCROLL, MAKELONG(SB_BOTTOM, 0), 0);
+
+  if (ClientNode.isRunCMD = 1) then
+    begin
+      CMDPID:= ClientNode.GetPID;
+      if (CMDPID = -1) then
+        Label_PID.Text:= ''
+      else
+        Label_PID.Text:= 'PID = ' + CMDPID.ToString;
+    end
+  else
+    begin
+      Label_PID.Text:= '';
+    end;
 
   Btn_DeleteNode.Enabled:= True;
 

@@ -10,7 +10,8 @@ uses
   PublicFun in 'PublicFun.pas',
   PublicVar in 'PublicVar.pas',
   Thread_ExecCommand in 'Thread_ExecCommand.pas',
-  Class_TrayItem in 'Class_TrayItem.pas';
+  Class_TrayItem in 'Class_TrayItem.pas',
+  OSXFun in 'OSXFun.pas';
 
 {$R *.res}
 
