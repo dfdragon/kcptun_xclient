@@ -48,7 +48,7 @@ uses
 
   Xml.XMLIntf, Xml.XMLDoc, System.JSON,
 
-  Thread_ExecCommand;
+  OSXFun, Thread_ExecCommand;
 
 
 
@@ -82,6 +82,7 @@ type
     FisJson: Integer;               FJson: string;
 
     FLocalPort: string;
+    FAllowOnlyLocal: Integer;
     FKCPServerIP: string;
     FKCPServerPort: string;
 
@@ -120,6 +121,7 @@ type
     procedure SetJson(const Value: string);
 
     procedure SetLocalPort(const Value: string);
+    procedure SetAllowOnlyLocal(const Value: Integer);
     procedure SetKCPServerIP(const Value: string);
     procedure SetKCPServerPort(const Value: string);
 
@@ -197,6 +199,7 @@ type
 
     //基础参数
     property LocalPort: string read FLocalPort write SetLocalPort;
+    property AllowOnlyLocal: Integer read FAllowOnlyLocal write SetAllowOnlyLocal;
     property KCPServerIP: string read FKCPServerIP write SetKCPServerIP;
     property KCPServerPort: string read FKCPServerPort write SetKCPServerPort;
 
@@ -398,6 +401,16 @@ begin
       FXMLDocument_Para.SaveToFile;
     end;
   FLocalPort:= Value;
+end;
+
+procedure TClientNode.SetAllowOnlyLocal(const Value: Integer);
+begin
+  if FCanModifyXML then
+    begin
+      FXMLNode.ChildNodes.FindNode('localport').Attributes['allowonlylocal']:= Value;
+      FXMLDocument_Para.SaveToFile;
+    end;
+  FAllowOnlyLocal:= Value;
 end;
 
 procedure TClientNode.SetKCPServerIP(const Value: string);
@@ -775,6 +788,7 @@ begin
     FJson:= VarToStr(DealNode.NodeValue);
 
     FLocalPort:= VarToStr(XMLClientNode.ChildNodes.FindNode('localport').NodeValue).Trim;
+    FAllowOnlyLocal:= StrToInt(VarToStr(XMLClientNode.ChildNodes.FindNode('localport').Attributes['allowonlylocal']).Trim);
     FKCPServerIP:= VarToStr(XMLClientNode.ChildNodes.FindNode('kcpserverip').NodeValue).Trim;
     FKCPServerPort:= VarToStr(XMLClientNode.ChildNodes.FindNode('kcpserverport').NodeValue).Trim;
 
@@ -870,6 +884,7 @@ begin
 
     DealNode:= XMLClientNode.AddChild('localport');
     DealNode.NodeValue:= FLocalPort;
+    DealNode.Attributes['allowonlylocal']:= FAllowOnlyLocal;
     DealNode:= XMLClientNode.AddChild('kcpserverip');
     DealNode.NodeValue:= FKCPServerIP;
     DealNode:= XMLClientNode.AddChild('kcpserverport');
@@ -993,7 +1008,12 @@ begin
     end;
 
   //基础参数
-  CMDLine:= CMDLine + ' -l :' + FLocalPort + ' -r ' + FKCPServerIP + ':' + FKCPServerPort;
+  if (FAllowOnlyLocal = 0) then
+    CMDLine:= CMDLine + ' -l :' + FLocalPort
+  else
+    CMDLine:= CMDLine + ' -l 127.0.0.1:' + FLocalPort;
+  CMDLine:= CMDLine + ' -r ' + FKCPServerIP + ':' + FKCPServerPort;
+//  CMDLine:= CMDLine + ' -l :' + FLocalPort + ' -r ' + FKCPServerIP + ':' + FKCPServerPort;
 
   //需要与服务端保持一致
   if (FisKey <> 0) and (FKey.Trim <> '') then
