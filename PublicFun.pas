@@ -65,7 +65,7 @@ implementation
 procedure CreateBlankParaXML(ParaXMLPathName: string);
 var
   XMLDocument_BlankPara: TXMLDocument;
-  Blank_ParasNode, Blank_ProgramParaNode: IXMLNode;
+  Blank_ParasNode, Blank_ProgramParaNode, Node: IXMLNode;
 begin
   XMLDocument_BlankPara:= TXMLDocument.Create(Application);
   XMLDocument_BlankPara.Active:= True;
@@ -82,6 +82,10 @@ begin
     Blank_ProgramParaNode.AddChild('minimize').NodeValue:= 0;
     Blank_ProgramParaNode.AddChild('clientexedir');
 
+    Node:= Blank_ProgramParaNode.AddChild('autoconn');
+    Node.NodeValue:= 5;
+    Node.Attributes['enable']:= 0;
+
     Blank_ParasNode.AddChild('clientnodes');
 
     XMLDocument_BlankPara.SaveToFile(ParaXMLPathName);
@@ -90,12 +94,12 @@ begin
   end;
 end;
 
-//实现-c参数，Node中加入json节点
+//实现-c参数，Node中加入json节点；加入自动重连节点
 procedure RepaireParaXML(ParaXMLPathName: string);
 var
   isModify: Boolean;
   XMLDocument_BlankPara: TXMLDocument;
-  ParasNode, ClientNode, Node, JsonNode: IXMLNode;
+  ParasNode, ProgramParaNode, ClientNode, Node, LocalPortNode, JsonNode, AutoConnNode: IXMLNode;
   i: Integer;
 begin
   isModify:= False;
@@ -108,10 +112,31 @@ begin
   XMLDocument_BlankPara.LoadFromFile(ParaXMLPathName);
   try
     ParasNode:= XMLDocument_BlankPara.DocumentElement;
+
+    ProgramParaNode:= ParasNode.ChildNodes.FindNode('programpara');
+    AutoConnNode:= ProgramParaNode.ChildNodes.FindNode('autoconn');
+    if AutoConnNode = nil then
+      begin
+        isModify:= True;
+        AutoConnNode:= ProgramParaNode.AddChild('autoconn');
+        AutoConnNode.NodeValue:= 5;
+        AutoConnNode.Attributes['enable']:= 0;
+      end;
+
     ClientNode:= ParasNode.ChildNodes.FindNode('clientnodes');
     for i := 0 to (ClientNode.ChildNodes.Count - 1) do
       begin
         Node:= ClientNode.ChildNodes[i];
+        LocalPortNode:= Node.ChildNodes.FindNode('localport');
+        if LocalPortNode <> nil then
+          begin
+            if (LocalPortNode.AttributeNodes.FindNode('allowonlylocal') = nil) then
+              begin
+                isModify:= True;
+                LocalPortNode.Attributes['allowonlylocal']:= 0;
+              end;
+          end;
+
         JsonNode:= Node.ChildNodes.FindNode('json');
         if JsonNode = nil then
           begin
